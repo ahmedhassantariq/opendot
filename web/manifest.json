@@ -1,6 +1,6 @@
 {
-    "name": "hackerio",
-    "short_name": "hackerio",
+    "name": "reddit_app",
+    "short_name": "reddit_app",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
