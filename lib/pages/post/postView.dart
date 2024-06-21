@@ -145,7 +145,7 @@ class _PostViewState extends State<PostView> {
                               if (snapshot.hasError) {
                                 return const Align(alignment: Alignment.center, child: Text('Error Loading Comment'));
                               } else {
-                                return const LinearProgressIndicator();
+                                return const SizedBox(height: 0);
                               }
                             },
                           ),

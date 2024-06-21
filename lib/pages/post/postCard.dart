@@ -36,10 +36,10 @@ class _PostCardState extends State<PostCard> {
       future: _postServices.getUser(widget.postModel.uploadedBy),
       builder: (context, snapshot){
         if(snapshot.hasError){
-          return const Icon(Icons.error_outline);
+          return const SizedBox(height: 0);
         }
         if(snapshot.connectionState==ConnectionState.waiting){
-          return Center(child: const Text(""));
+          return const Center(child: Text(""));
         }
       return GestureDetector(
         onTap: (){
@@ -86,16 +86,37 @@ class _PostCardState extends State<PostCard> {
                   ],
                 ),
               ),
-                const SizedBox(height: 8.0),
-                Text(widget.postModel.postTitle.toString(), style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 18, letterSpacing: 0.5),),
-                const SizedBox(height: 8.0),
-                Align(alignment: Alignment.center,child:
-                widget.postModel.imageUrl.isNotEmpty ?
-                CacheImage(imageUrl: widget.postModel.imageUrl.first)
-                    :
-                const SizedBox(height: 0, width: 0)),
-                Text(widget.postModel.postDescription.toString()),
-                const SizedBox(height: 8.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+
+                      children: [
+                        const SizedBox(height: 8.0),
+                        Text(widget.postModel.postTitle.toString(), style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 18, letterSpacing: 0.5),),
+                        const SizedBox(height: 8.0),
+                        Text(widget.postModel.postDescription.toString()),
+                        const SizedBox(height: 8.0),
+                      ],
+                    ),
+
+                    Row(
+                      children: [
+                        Align(alignment: Alignment.center,child:
+                        widget.postModel.imageUrl.isNotEmpty ?
+                            SizedBox(
+                              width: 50,
+                              child:CacheImage(imageUrl: widget.postModel.imageUrl.first),
+                            )
+                            :
+                        const SizedBox(height: 0, width: 0)),
+                      ],
+                    )
+
+                  ],
+                ),
+
                 // PostActions(postID: widget.postModel.postID),
 
         ],),

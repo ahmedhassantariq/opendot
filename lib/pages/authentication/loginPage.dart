@@ -70,11 +70,13 @@ class _LoginPageState extends State<LoginPage> {
                       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(25))),
                       Buttons.Email,onPressed: signIn, text: "Sign In with Email"),
                   const SizedBox(height: 25),
-                  SignInButton(
-                      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
-                      mini: false,
-                      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(25))),
-                      Buttons.Google,onPressed: signInWithGoogle, text: "Continue with Google"),                const SizedBox(height: 25),
+                  // SignInButton(
+                  //     padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                  //     mini: false,
+                  //     shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(25))),
+                  //     Buttons.Google,onPressed: signInWithGoogle, text: "Continue with Google"),
+                  //
+                  // const SizedBox(height: 25),
 
                   Row(
                       mainAxisAlignment: MainAxisAlignment.center,

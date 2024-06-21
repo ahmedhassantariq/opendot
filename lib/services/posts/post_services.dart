@@ -125,6 +125,13 @@ class PostServices extends ChangeNotifier{
   }
 
 
+  Future<String>getUrl(String pickedImageName) async {
+    final storageReference = FirebaseStorage.instance.ref(
+        "images/$pickedImageName");
+
+    return await storageReference.getDownloadURL();
+  }
+
   Future<String>uploadImage(String pickedImageName, Uint8List img) async {
     final storageReference = FirebaseStorage.instance.ref(
         "images/$pickedImageName");

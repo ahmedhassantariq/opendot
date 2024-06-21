@@ -17,7 +17,7 @@ class _CacheImageState extends State<CacheImage> {
   Widget build(BuildContext context) {
     return CachedNetworkImage(
         imageUrl: widget.imageUrl,
-        fit: BoxFit.fitWidth,
+        fit: BoxFit.contain,
         placeholder: (context, url) => const SizedBox(height: 0, width: 0,),
         errorWidget: (context, url, error) => const Icon(Icons.image_not_supported_outlined));
   }

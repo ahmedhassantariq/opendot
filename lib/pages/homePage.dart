@@ -36,9 +36,17 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  final List<String> _appbarHeading = [
+    'PC',
+    'Internet',
+    '',
+    'Chat',
+    'Inbox'
+  ];
+
   final List<Widget> _widgets = [
-    const ScrollViewPage(),
     Container(),
+    const ScrollViewPage(),
     const CreatePostPage(),
     const ChatPage(),
     const Inbox(),
@@ -74,8 +82,8 @@ class _HomePageState extends State<HomePage> {
          unselectedItemColor: Colors.grey,
          showUnselectedLabels: true,
          items:  const [
-           BottomNavigationBarItem(icon: Icon(Icons.home_outlined, color: Colors.grey,), label: "Home", activeIcon: Icon(Icons.home)),
-           BottomNavigationBarItem(icon: Icon(Icons.people_outline), label: "Communities", activeIcon: Icon(Icons.people)),
+           BottomNavigationBarItem(icon: Icon(Icons.computer_outlined, color: Colors.grey,), label: "PC", activeIcon: Icon(Icons.computer)),
+           BottomNavigationBarItem(icon: Icon(CupertinoIcons.globe), label: "Internet", activeIcon: Icon(CupertinoIcons.globe)),
            BottomNavigationBarItem(icon: Icon(Icons.add_outlined), label: "Create", activeIcon: Icon(Icons.add)),
            BottomNavigationBarItem(icon: Icon(Icons.chat_outlined), label: "Chat", activeIcon: Icon(Icons.chat)),
            BottomNavigationBarItem(icon: Icon(Icons.notifications_outlined, color: Colors.grey), label: "Inbox", activeIcon: Icon(Icons.notifications)),
@@ -125,8 +133,8 @@ class _HomePageState extends State<HomePage> {
       return list[currentIndex];
     }
     return AppBar(
-      title: const Text("AppBar", style: TextStyle(color: Colors.black)),
-      backgroundColor: HexColor("#FFFFFF"),
+      title: Text(_appbarHeading[currentIndex].toString(), style: TextStyle(color: Colors.black)),
+      backgroundColor: Colors.white,
       iconTheme: const IconThemeData(color: Colors.black),
       actions: [
         _buildActions(),

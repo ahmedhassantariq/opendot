@@ -16,6 +16,7 @@ class _EndDrawerState extends State<EndDrawer> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
+      backgroundColor: Colors.white,
       child: ListView(
         children: [
           FutureBuilder(

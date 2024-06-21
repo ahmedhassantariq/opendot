@@ -2,7 +2,9 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit_app/services/posts/post_services.dart';
@@ -23,7 +25,9 @@ class _CreatePostPageState extends State<CreatePostPage> {
   late List<String> imageUrl = [];
   double iconSize = 30;
   bool isUploading = false;
-
+  double uploadProgress = 0;
+  bool pause = false;
+  bool cancel = false;
 
   
   @override
@@ -36,7 +40,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
             shrinkWrap: true,
             children: [
               Padding(
-                padding: EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(8.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -69,7 +73,8 @@ class _CreatePostPageState extends State<CreatePostPage> {
                           )
                       ),
                       child: const Text("Post", style: TextStyle(color: Colors.white),),
-                    ): const Icon(Icons.stop, color: Colors.red,size: 50,),
+                    ):
+                    GestureDetector(onTap: (){cancel=true;},child: const Icon(Icons.stop, color: Colors.red,size: 50,)),
                   ],
                 ),
               ),
@@ -93,7 +98,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
             ],
           ),
         ),
-        isUploading ? const LinearProgressIndicator() : const SizedBox(width:0,height: 0,),
+        isUploading ? LinearProgressIndicator(value: uploadProgress) : const SizedBox(width:0,height: 0,),
         Container(
           height: 56,
           color: Colors.white,
@@ -118,11 +123,44 @@ class _CreatePostPageState extends State<CreatePostPage> {
                         setState(() {
                           isUploading = true;
                         });
-                        _postServices.uploadImage(pickedImage.name, img)
-                            .then((value){ imageUrl.add(value);
-                            setState(() {
-                              isUploading = false;
-                            });});
+                        final storageReference = FirebaseStorage.instance.ref();
+                        final uploadTask = storageReference.child('images/${pickedImage.name}').putData(img);
+                        // final TaskSnapshot task = await storageReference.putData(img);
+                        uploadTask.snapshotEvents.listen((TaskSnapshot taskSnapshot) {
+                          switch (taskSnapshot.state) {
+                            case TaskState.running:
+                               setState(() {
+                                 uploadProgress = (taskSnapshot.bytesTransferred / taskSnapshot.totalBytes);
+                                 if(cancel){
+                                   uploadTask.cancel();
+                                   setState(() {
+                                     isUploading = false;
+                                     cancel = false;
+                                   });
+                                 }
+                               });
+                              break;
+                            case TaskState.paused:
+
+                              break;
+                            case TaskState.canceled:
+                              print("Upload was canceled");
+                              break;
+                            case TaskState.error:
+                              setState(() {
+                                isUploading = false;
+                              });
+                              break;
+                            case TaskState.success:
+                              _postServices.getUrl(pickedImage.name).then((value){ imageUrl.add(value);
+                              setState(() {
+                                isUploading = false;
+                              });});
+                              break;
+                          }
+                        });
+
+
                       }
                     },
                     child: const Icon(Icons.photo_outlined, color: Colors.grey))

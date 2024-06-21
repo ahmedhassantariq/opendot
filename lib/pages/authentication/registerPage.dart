@@ -49,7 +49,7 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: SafeArea(
           child: Center(
@@ -74,12 +74,12 @@ class _RegisterPageState extends State<RegisterPage> {
                       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(25))),
                       Buttons.Email,onPressed: signUp, text: "Sign Up with Email"),
                   const SizedBox(height: 25),
-                  SignInButton(
-                      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
-                      mini: false,
-                      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(25))),
-                      Buttons.Google,onPressed: signInWithGoogle, text: "Continue with Google"),
-                  const SizedBox(height: 25),
+                  // SignInButton(
+                  //     padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                  //     mini: false,
+                  //     shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(25))),
+                  //     Buttons.Google,onPressed: signInWithGoogle, text: "Continue with Google"),
+                  // const SizedBox(height: 25),
 
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
