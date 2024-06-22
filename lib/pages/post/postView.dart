@@ -4,8 +4,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:media_kit/media_kit.dart';
+import 'package:media_kit_video/media_kit_video.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit_app/components/commentTextfield.dart';
+import 'package:reddit_app/components/postViewer.dart';
 import 'package:reddit_app/models/commentModel.dart';
 import 'package:reddit_app/models/postModel.dart';
 import 'package:reddit_app/models/userDataModel.dart';
@@ -35,22 +38,41 @@ class PostView extends StatefulWidget {
 class _PostViewState extends State<PostView> {
   final TextEditingController _searchQueryController = TextEditingController();
   final TextEditingController _commentTextFieldController = TextEditingController();
+  late final player = Player();
+  // Create a [VideoController] to handle video output from [Player].
+  late final _videoController = VideoController(
+      player,
+    configuration: VideoControllerConfiguration(enableHardwareAcceleration: true)
+
+  );
   final StreamController<Stream<List<CommentModel>>> streamController = StreamController();
   final PostServices _postServices = PostServices();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   bool _isSearching = false;
   String searchQuery = "Search query";
-
   @override
   void initState() {
-    _searchQueryController.addListener(() {searchComment();});
     super.initState();
+    print(widget.postModel.postType);
+    _searchQueryController.addListener(() {searchComment();});
+    if(widget.postModel.postType=='video'){
+
+      player.open(Media(widget.postModel.imageUrl.first), play: false);
+    }
   }
 
   searchComment(){
     setState(() {
       streamController.add(_postServices.searchComment(widget.postModel.postID,_searchQueryController.text));
     });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    player.dispose();
+    print("Closed");
+    super.dispose();
   }
 
   @override
@@ -122,9 +144,32 @@ class _PostViewState extends State<PostView> {
                             child: Text(widget.postModel.postTitle.toString(), style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 18, letterSpacing: 0.5),),
                           ),
                           const SizedBox(height: 8.0),
+
+
+
                           widget.postModel.imageUrl.isNotEmpty ?  GestureDetector(
-                              onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context)=> ImageViewer(url: widget.postModel.imageUrl.first)));},
-                              child: CacheImage(imageUrl: widget.postModel.imageUrl.first)) : const SizedBox(),
+                              onTap: () {
+                                // switch(widget.postModel.postType){
+                                //   case "image":
+                                //     Navigator.push(context, MaterialPageRoute(builder: (context)=> PostViewer(url: widget.postModel.imageUrl)));
+                                //     break;
+                                //   case "video":
+                                //     Navigator.push(context, MaterialPageRoute(builder: (context)=> Text(widget.postModel.imageUrl.toString())));
+                                //     break;
+                              // }
+          },
+
+                              child: widget.postModel.postType.contains("image") ?
+                              CacheImage(imageUrl: widget.postModel.imageUrl.first)
+                                  :
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width,
+                                height: MediaQuery.of(context).size.width * 9.0 / 16.0,
+                                // Use [Video] widget to display video output.
+                                child: Video(controller: _videoController),
+                              ),
+
+                          ) : const SizedBox(),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 8.0),
                             child: Text(widget.postModel.postDescription.toString()),

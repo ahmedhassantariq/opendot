@@ -128,6 +128,7 @@ class _ProfilePageState extends State<ProfilePage>{
                           itemCount: snapshot.data!.docs.length,
                           itemBuilder: (BuildContext context, int index) {
                             PostModel postModel = PostModel(
+                                postType: snapshot.data!.docs[index].get("postType"),
                                 postID: snapshot.data!.docs[index].get("postID"),
                                 postTitle: snapshot.data!.docs[index].get('postTitle').toString(),
                                 postDescription: snapshot.data!.docs[index].get('postDescription'),

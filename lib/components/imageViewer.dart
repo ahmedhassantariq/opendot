@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:photo_view/photo_view.dart';
+import 'package:photo_view/photo_view_gallery.dart';
+import 'package:reddit_app/components/cacheImage.dart';
 
 class ImageViewer extends StatefulWidget {
   final String url;
@@ -18,22 +21,11 @@ class _ImageViewerState extends State<ImageViewer> {
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.black,
-        leading: IconButton(onPressed: (){Navigator.pop(context);}, icon: const Icon(Icons.close)),
+        leading: IconButton(onPressed: (){Navigator.pop(context);}, icon: const Icon(Icons.close,color: Colors.white,)),
         actions: const [Icon(Icons.bookmark_border_outlined)],
       ),
       body: Center(
-        child: Draggable(
-          feedback: Image.network(widget.url),
-          child: Image.network(widget.url),
-          onDraggableCanceled: (velocity, offset){
-            print(offset);
-            if(offset.dy>300){
-              Navigator.pop(context);
-            }
-          },
-
-        ),
-        
+        child: PhotoView(imageProvider: NetworkImage(widget.url))
       ),
     );
   }

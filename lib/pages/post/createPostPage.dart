@@ -1,9 +1,12 @@
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -29,6 +32,37 @@ class _CreatePostPageState extends State<CreatePostPage> {
   bool pause = false;
   bool cancel = false;
 
+  checkType(){
+    String postType = "post";
+    if(imageUrl.isNotEmpty) {
+      String s = imageUrl.first;
+      String one = s.substring(s.indexOf("/images%"), s.indexOf("?"));
+      String two = one.substring(one.indexOf("."));
+
+      switch (two) {
+        case ".png":
+          postType = "image";
+          break;
+        case ".jpg":
+          postType = "image";
+          break;
+        case ".jpeg":
+          postType = "image";
+          break;
+        case ".mp4":
+          postType = "video";
+          break;
+        case ".mov":
+          postType = "video";
+          break;
+        case ".mp3":
+          postType = "video";
+          break;
+      }
+    }
+    return postType;
+  }
+
   
   @override
   Widget build(BuildContext context) {
@@ -53,11 +87,13 @@ class _CreatePostPageState extends State<CreatePostPage> {
                         icon: const Icon(Icons.close)),
                     !isUploading ? TextButton(
                       onPressed: (){
+                        checkType();
                         if(_postTextFieldTitleController.text.isNotEmpty){
                           _postServices.createPost(
                               _postTextFieldTitleController.text,
                               _postTextFieldBodyController.text,
-                              imageUrl
+                              imageUrl,
+                            checkType()
                           );
                           Navigator.pop(context);
                           Provider.of<PostServices>(context, listen: false).notifyListeners();
@@ -115,16 +151,18 @@ class _CreatePostPageState extends State<CreatePostPage> {
                 const SizedBox(width: 8.0,),
                 GestureDetector(
                     onTap: () async {
-                      final pickedImage = await picker.pickImage(source: ImageSource.gallery);
-                      if(pickedImage?.path!=null) {
-                        File file = File(pickedImage!.path);
-                        Image image = Image.memory(await pickedImage.readAsBytes());
-                        Uint8List img = await pickedImage.readAsBytes();
+                      // final pickedImage = await picker.pickImage(source: ImageSource.gallery, imageQuality: 0);
+                      FilePickerResult? pickedImage = await FilePicker.platform.pickFiles();
+                      if(pickedImage!=null) {
+                        PlatformFile file = pickedImage.files.first;
+                        // File file = File(pickedImage!.path);
+                        // Image image = Image.memory(await pickedImage.readAsBytes());
+                        Uint8List? img = pickedImage.files.single.bytes;
                         setState(() {
                           isUploading = true;
                         });
                         final storageReference = FirebaseStorage.instance.ref();
-                        final uploadTask = storageReference.child('images/${pickedImage.name}').putData(img);
+                        final uploadTask = storageReference.child('images/${pickedImage.files.single.name}').putData(img!);
                         // final TaskSnapshot task = await storageReference.putData(img);
                         uploadTask.snapshotEvents.listen((TaskSnapshot taskSnapshot) {
                           switch (taskSnapshot.state) {
@@ -141,7 +179,6 @@ class _CreatePostPageState extends State<CreatePostPage> {
                                });
                               break;
                             case TaskState.paused:
-
                               break;
                             case TaskState.canceled:
                               print("Upload was canceled");
@@ -152,7 +189,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                               });
                               break;
                             case TaskState.success:
-                              _postServices.getUrl(pickedImage.name).then((value){ imageUrl.add(value);
+                              _postServices.getUrl(pickedImage.files.single.name).then((value){imageUrl.add(value);
                               setState(() {
                                 isUploading = false;
                               });});

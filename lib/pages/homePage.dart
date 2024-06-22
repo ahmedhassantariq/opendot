@@ -133,7 +133,7 @@ class _HomePageState extends State<HomePage> {
       return list[currentIndex];
     }
     return AppBar(
-      title: Text(_appbarHeading[currentIndex].toString(), style: TextStyle(color: Colors.black)),
+      title: Text(_appbarHeading[currentIndex].toString(), style: const TextStyle(color: Colors.black)),
       backgroundColor: Colors.white,
       iconTheme: const IconThemeData(color: Colors.black),
       actions: [

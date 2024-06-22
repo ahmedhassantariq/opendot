@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class PostModel {
   final String postID;
+  final String postType;
   final String postTitle;
   final String postDescription;
   final Timestamp uploadedOn;
@@ -13,6 +14,7 @@ class PostModel {
 
   const PostModel({
     required this.postID,
+    required this.postType,
     required this.postTitle,
     required this.uploadedBy,
     required this.postDescription,
@@ -24,6 +26,7 @@ class PostModel {
 
   factory PostModel.fromMap(DocumentSnapshot<Map<String, dynamic>> documentSnapshot){
     return(PostModel(
+        postType: documentSnapshot.get('postType'),
         postID: documentSnapshot.get('postID'),
         postTitle: documentSnapshot.get('postTitle'),
         uploadedBy: documentSnapshot.get('uploadedBy'),

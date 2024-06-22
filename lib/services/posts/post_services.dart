@@ -28,7 +28,7 @@ class PostServices extends ChangeNotifier{
   Stream<List<PostModel>> getPostData() {
     Stream<QuerySnapshot> stream = _firestore.collection('posts').orderBy('uploadedOn', descending: true).snapshots();
     Stream<List<PostModel>> model = stream.map((event) => event.docs.map((e) =>
-        PostModel(postID: e.get("postID"), postTitle: e.get("postTitle"), uploadedBy: e.get("uploadedBy"), postDescription: e.get("postDescription"), uploadedOn: e.get("uploadedOn"), upVotes: e.get("upVotes"), imageUrl: e.get("imageUrl"), downVotes: e.get("downVotes"))).toList());
+        PostModel(postType: e.get("postType"),postID: e.get("postID"), postTitle: e.get("postTitle"), uploadedBy: e.get("uploadedBy"), postDescription: e.get("postDescription"), uploadedOn: e.get("uploadedOn"), upVotes: e.get("upVotes"), imageUrl: e.get("imageUrl"), downVotes: e.get("downVotes"))).toList());
     return model;
   }
 
@@ -41,7 +41,7 @@ class PostServices extends ChangeNotifier{
   }
 
 
-  Future<void> createPost(String postTitle, String postBody, List<dynamic> imageUrl) async {
+  Future<void> createPost(String postTitle, String postBody, List<dynamic> imageUrl, postType) async {
     final String currentUserId = _firebaseAuth.currentUser!.uid;
     final String docID = _firestore.collection('reddit').doc('posts').collection("user_posts").doc().id;
     await _firestore
@@ -49,6 +49,7 @@ class PostServices extends ChangeNotifier{
         .doc(docID)
         .set(
         {
+          "postType":postType,
           "postID": docID,
           "uploadedBy": currentUserId,
           "uploadedOn": Timestamp.now(),

@@ -107,7 +107,9 @@ class _PostCardState extends State<PostCard> {
                         widget.postModel.imageUrl.isNotEmpty ?
                             SizedBox(
                               width: 50,
-                              child:CacheImage(imageUrl: widget.postModel.imageUrl.first),
+                              child: widget.postModel.postType=='image'?
+                              CacheImage(imageUrl: widget.postModel.imageUrl.first):
+                              const Icon(Icons.video_collection_outlined),
                             )
                             :
                         const SizedBox(height: 0, width: 0)),
