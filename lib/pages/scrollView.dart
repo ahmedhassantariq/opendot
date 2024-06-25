@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:reddit_app/components/shimmerList.dart';
 import 'package:reddit_app/models/postModel.dart';
 import 'package:reddit_app/pages/post/postCard.dart';
 import 'package:reddit_app/services/posts/post_services.dart';
@@ -41,6 +42,7 @@ class _ScrollViewPageState extends State<ScrollViewPage> {
           return RefreshIndicator(
             onRefresh: refreshScrollView,
             child: ListView.builder(
+              addAutomaticKeepAlives: true,
               shrinkWrap: true,
               scrollDirection: Axis.vertical,
               itemCount: snapshot.data!.length,
@@ -56,7 +58,7 @@ class _ScrollViewPageState extends State<ScrollViewPage> {
         if (snapshot.hasError) {
           return const Center(child: Text('Error'));
         } else {
-          return const LinearProgressIndicator();
+          return const ShimmerList();
         }
       },
     );

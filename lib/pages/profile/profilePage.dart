@@ -5,6 +5,7 @@ import 'package:media_kit_video/media_kit_video.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit_app/components/postFileIcon.dart';
 import 'package:reddit_app/components/postFileView.dart';
+import 'package:reddit_app/components/postViewer.dart';
 import 'package:reddit_app/pages/scrollView.dart';
 import 'package:reddit_app/services/posts/post_services.dart';
 
@@ -69,10 +70,12 @@ class _ProfilePageState extends State<ProfilePage>{
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: CircleAvatar(
-                      backgroundColor: Colors.transparent,
-                      backgroundImage: NetworkImage(snapshot.data!.imageUrl),
-                      maxRadius: 120,
+                    child: GestureDetector(
+                      child: CircleAvatar(
+                        backgroundColor: Colors.transparent,
+                        backgroundImage: NetworkImage(snapshot.data!.imageUrl),
+                        maxRadius: 120,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 4.0),

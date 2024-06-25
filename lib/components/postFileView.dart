@@ -1,8 +1,10 @@
 import 'dart:html';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
+import 'package:piano/piano.dart';
 import 'package:reddit_app/components/postViewer.dart';
 
 import 'cacheImage.dart';
@@ -17,14 +19,15 @@ class PostFileView extends StatefulWidget {
   State<PostFileView> createState() => _PostFileViewState();
 }
 
-class _PostFileViewState extends State<PostFileView> {
-  late final player = Player();
-  // Create a [VideoController] to handle video output from [Player].
+class _PostFileViewState extends State<PostFileView> with TickerProviderStateMixin{
+  late final videoPlayer = Player();
+
   late final _videoController = VideoController(
-      player,
+      videoPlayer,
       configuration: const VideoControllerConfiguration(enableHardwareAcceleration: true)
 
   );
+
 
 
   checkType(){
@@ -55,6 +58,7 @@ class _PostFileViewState extends State<PostFileView> {
         case ".wav":
           postType = "video";
           break;
+
         default:
           postType = "file";
       }
@@ -68,17 +72,15 @@ class _PostFileViewState extends State<PostFileView> {
   void initState() {
     // TODO: implement initState
     super.initState();
-
     if(checkType()=='video'){
-
-      player.open(Media(widget.url.first), play: false);
+      videoPlayer.open(Media(widget.url.first), play: false);
     }
   }
 
   @override
   void dispose() {
     // TODO: implement dispose
-    player.dispose();
+    videoPlayer.dispose();
     super.dispose();
   }
   @override
@@ -104,7 +106,9 @@ class _PostFileViewState extends State<PostFileView> {
               .size
               .width * 9.0 / 16.0,
           // Use [Video] widget to display video output.
-          child: Video(controller: _videoController),
+          child: Video(
+              controller: _videoController,
+          ),
         );
       }
       if (checkType() == 'file') {
@@ -113,7 +117,7 @@ class _PostFileViewState extends State<PostFileView> {
               AnchorElement anchor = AnchorElement(href: widget.url.first);
               AnchorElement
                   .created()
-                  .download = 'Logo';
+                  .download = 'File';
               anchor.click();
             },
             icon: const Icon(Icons.download)

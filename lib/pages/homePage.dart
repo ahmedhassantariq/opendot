@@ -45,8 +45,8 @@ class _HomePageState extends State<HomePage> {
   ];
 
   final List<Widget> _widgets = [
-    Container(),
     const ScrollViewPage(),
+    Container(),
     const CreatePostPage(),
     const ChatPage(),
     const Inbox(),
@@ -140,24 +140,9 @@ class _HomePageState extends State<HomePage> {
         _buildActions(),
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: GestureDetector(
-            onTap: (){_scaffoldKey.currentState!.openEndDrawer();},
-            child: FutureBuilder(
-                future: PostServices().getUser(_firebaseAuth.currentUser!.uid),
-                builder: (builder, snapshot){
-                  if(snapshot.hasError){
-                    return const Icon(CupertinoIcons.arrow_left, color: Colors.black);
-                  }
-                  if(snapshot.connectionState == ConnectionState.waiting){
-                    return const SizedBox();
-                  }
-                  return CircleAvatar(
-                    minRadius: 20,
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.transparent,
-                    backgroundImage: NetworkImage(snapshot.data!.imageUrl),
-                  );
-                }),
+          child: IconButton(
+            onPressed: (){_scaffoldKey.currentState!.openEndDrawer();},
+            icon: const Icon(Icons.person),
           ),
         )
       ],

@@ -1,25 +1,20 @@
 import 'dart:async';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:media_kit/media_kit.dart';
-import 'package:media_kit_video/media_kit_video.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit_app/components/commentTextfield.dart';
 import 'package:reddit_app/components/postFileView.dart';
-import 'package:reddit_app/components/postViewer.dart';
+import 'package:reddit_app/components/shimmer.dart';
 import 'package:reddit_app/models/commentModel.dart';
 import 'package:reddit_app/models/postModel.dart';
-import 'package:reddit_app/models/userDataModel.dart';
 import 'package:reddit_app/pages/post/comment/commentCard.dart';
 import 'package:reddit_app/pages/drawer/endDrawer.dart';
 import 'package:reddit_app/pages/post/postUpdatePage.dart';
 import 'package:reddit_app/pages/post/sharePostPage.dart';
 import 'package:reddit_app/services/posts/post_services.dart';
-import '../../components/cacheImage.dart';
-import '../../components/imageViewer.dart';
+import 'package:shimmer/shimmer.dart';
 import '../profile/bottomProfileModal.dart';
 
 
@@ -81,7 +76,7 @@ class _PostViewState extends State<PostView> {
               return const Text("Could not load Post");
             }
             if(snapshot.connectionState == ConnectionState.waiting){
-              return const LinearProgressIndicator();
+              return const SingleShimmer();
             }
             return Column(
               children: [
@@ -226,6 +221,9 @@ class _PostViewState extends State<PostView> {
                                 Navigator.pop(context);
                                 _commentTextFieldController.clear();
                                Provider.of<PostServices>(context, listen: false).notifyListeners();
+                               setState(() {
+
+                               });
                               }
                             },
                             style: TextButton.styleFrom(

@@ -26,7 +26,7 @@ class _EndDrawerState extends State<EndDrawer> {
                   return const Text("Error Loading");
                 }
                 if(snapshot.connectionState == ConnectionState.waiting) {
-                  return const LinearProgressIndicator();
+                  return const SizedBox();
                 }
                 return Column(
                   children: [

@@ -60,6 +60,9 @@ class _CreatePostPageState extends State<CreatePostPage> {
         case ".wav":
           postType = "video";
           break;
+
+
+
         default:
           postType = "file";
       }
@@ -158,7 +161,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                 Icon(Icons.gif_box_outlined, color: Colors.grey, size: iconSize),
                 const SizedBox(width: 8.0,),
                 GestureDetector(
-                    onTap: () async {
+                    onTap: !isUploading ? () async {
                       // final pickedImage = await picker.pickImage(source: ImageSource.gallery, imageQuality: 0);
                       FilePickerResult? pickedImage = await FilePicker.platform.pickFiles(
                         type: FileType.image,
@@ -208,8 +211,9 @@ class _CreatePostPageState extends State<CreatePostPage> {
 
 
                       }
-                    },
-                    child: const Icon(Icons.photo_outlined, color: Colors.grey))
+                    } : (){},
+                    child: const Icon(Icons.photo_outlined, color: Colors.grey)
+                )
               ],
             ),
           ),

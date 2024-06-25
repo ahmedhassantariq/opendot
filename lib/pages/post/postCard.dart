@@ -34,7 +34,7 @@ class PostCard extends StatefulWidget {
   State<PostCard> createState() => _PostCardState();
 }
 
-class _PostCardState extends State<PostCard> {
+class _PostCardState extends State<PostCard> with AutomaticKeepAliveClientMixin{
   final PostServices _postServices = PostServices();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
@@ -71,6 +71,7 @@ class _PostCardState extends State<PostCard> {
 
         )));},
         child: Card(
+          color: Colors.white,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
@@ -96,7 +97,7 @@ class _PostCardState extends State<PostCard> {
                         snapshot.data!.userName != null ?
                         Text(snapshot.data!.userName, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12))
                         :
-                        const Text('NoName', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
+                        const SizedBox(),
 
                         const SizedBox(width: 8.0),
                         Text(("${DateTime.now().difference(widget.postModel.uploadedOn.toDate()).inHours}h"), style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 12),),
@@ -222,5 +223,9 @@ class _PostCardState extends State<PostCard> {
               child: BottomProfileModal(uploadedBy: widget.postModel.uploadedBy));
         });
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }
 
