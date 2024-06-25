@@ -1,12 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:media_kit_video/media_kit_video.dart';
 import 'package:provider/provider.dart';
+import 'package:reddit_app/components/postFileIcon.dart';
+import 'package:reddit_app/components/postFileView.dart';
 import 'package:reddit_app/pages/scrollView.dart';
 import 'package:reddit_app/services/posts/post_services.dart';
 
+import '../../components/cacheImage.dart';
 import '../../models/postModel.dart';
 import '../post/postCard.dart';
+import '../post/postView.dart';
 
 
 class ProfilePage extends StatefulWidget {
@@ -117,12 +122,8 @@ class _ProfilePageState extends State<ProfilePage>{
                     stream: postStream,
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
-                        return GridView.builder(
+                        return ListView.builder(
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
-                            crossAxisSpacing: 8.0
-                          ),
                           shrinkWrap: true,
                           scrollDirection: Axis.vertical,
                           itemCount: snapshot.data!.docs.length,
@@ -139,7 +140,17 @@ class _ProfilePageState extends State<ProfilePage>{
                                 downVotes: snapshot.data!.docs[index].get('downVotes'));
                             return postModel.imageUrl.isNotEmpty
                                 ?
-                            Image.network(postModel.imageUrl.first)
+                            GestureDetector(
+                              onTap: (){
+                                Navigator.push(context, MaterialPageRoute(
+                                    builder: (context)=> PostView(
+                                      postModel: postModel,
+
+                                    )));},
+                              child: PostCard(
+                                postModel: postModel,
+                                isProfile: true,)
+                            )
                                 :
                             const SizedBox();
                           },

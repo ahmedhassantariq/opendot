@@ -38,7 +38,6 @@ class _CreatePostPageState extends State<CreatePostPage> {
       String s = imageUrl.first;
       String one = s.substring(s.indexOf("/images%"), s.indexOf("?"));
       String two = one.substring(one.indexOf("."));
-
       switch (two) {
         case ".png":
           postType = "image";
@@ -58,6 +57,11 @@ class _CreatePostPageState extends State<CreatePostPage> {
         case ".mp3":
           postType = "video";
           break;
+        case ".wav":
+          postType = "video";
+          break;
+        default:
+          postType = "file";
       }
     }
     return postType;
@@ -127,7 +131,11 @@ class _CreatePostPageState extends State<CreatePostPage> {
                         imageUrl.removeWhere((element) => element==imageUrl[i]);
                       });
                       }, icon: const Icon(Icons.delete_outline)),
-                    CachedNetworkImage(imageUrl: imageUrl[i],placeholder: (context, url) => const CircularProgressIndicator(), errorWidget: (context, url, error) => const Icon(Icons.image_not_supported_outlined)),
+                    checkType()=="image"  ?
+                    CachedNetworkImage(imageUrl: imageUrl[i],placeholder: (context, url) => const CircularProgressIndicator(), errorWidget: (context, url, error) => const Icon(Icons.image_not_supported_outlined)):
+                    const Icon(Icons.video_library_outlined)
+                    ,
+
                   ],
                 ))
                   :const SizedBox(width: 0,height: 0,),
@@ -152,7 +160,9 @@ class _CreatePostPageState extends State<CreatePostPage> {
                 GestureDetector(
                     onTap: () async {
                       // final pickedImage = await picker.pickImage(source: ImageSource.gallery, imageQuality: 0);
-                      FilePickerResult? pickedImage = await FilePicker.platform.pickFiles();
+                      FilePickerResult? pickedImage = await FilePicker.platform.pickFiles(
+                        type: FileType.image,
+                      );
                       if(pickedImage!=null) {
                         PlatformFile file = pickedImage.files.first;
                         // File file = File(pickedImage!.path);
@@ -163,7 +173,6 @@ class _CreatePostPageState extends State<CreatePostPage> {
                         });
                         final storageReference = FirebaseStorage.instance.ref();
                         final uploadTask = storageReference.child('images/${pickedImage.files.single.name}').putData(img!);
-                        // final TaskSnapshot task = await storageReference.putData(img);
                         uploadTask.snapshotEvents.listen((TaskSnapshot taskSnapshot) {
                           switch (taskSnapshot.state) {
                             case TaskState.running:

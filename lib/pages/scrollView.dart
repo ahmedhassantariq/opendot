@@ -47,6 +47,7 @@ class _ScrollViewPageState extends State<ScrollViewPage> {
               itemBuilder: (BuildContext context, int index) {
                 return PostCard(
                   postModel: snapshot.data![index],
+                  isProfile: false,
                 );
               },
             ),

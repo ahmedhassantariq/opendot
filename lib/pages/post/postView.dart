@@ -8,6 +8,7 @@ import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit_app/components/commentTextfield.dart';
+import 'package:reddit_app/components/postFileView.dart';
 import 'package:reddit_app/components/postViewer.dart';
 import 'package:reddit_app/models/commentModel.dart';
 import 'package:reddit_app/models/postModel.dart';
@@ -38,13 +39,7 @@ class PostView extends StatefulWidget {
 class _PostViewState extends State<PostView> {
   final TextEditingController _searchQueryController = TextEditingController();
   final TextEditingController _commentTextFieldController = TextEditingController();
-  late final player = Player();
-  // Create a [VideoController] to handle video output from [Player].
-  late final _videoController = VideoController(
-      player,
-    configuration: VideoControllerConfiguration(enableHardwareAcceleration: true)
 
-  );
   final StreamController<Stream<List<CommentModel>>> streamController = StreamController();
   final PostServices _postServices = PostServices();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -53,12 +48,7 @@ class _PostViewState extends State<PostView> {
   @override
   void initState() {
     super.initState();
-    print(widget.postModel.postType);
     _searchQueryController.addListener(() {searchComment();});
-    if(widget.postModel.postType=='video'){
-
-      player.open(Media(widget.postModel.imageUrl.first), play: false);
-    }
   }
 
   searchComment(){
@@ -70,8 +60,6 @@ class _PostViewState extends State<PostView> {
   @override
   void dispose() {
     // TODO: implement dispose
-    player.dispose();
-    print("Closed");
     super.dispose();
   }
 
@@ -145,31 +133,8 @@ class _PostViewState extends State<PostView> {
                           ),
                           const SizedBox(height: 8.0),
 
+                          PostFileView(url: widget.postModel.imageUrl),
 
-
-                          widget.postModel.imageUrl.isNotEmpty ?  GestureDetector(
-                              onTap: () {
-                                // switch(widget.postModel.postType){
-                                //   case "image":
-                                //     Navigator.push(context, MaterialPageRoute(builder: (context)=> PostViewer(url: widget.postModel.imageUrl)));
-                                //     break;
-                                //   case "video":
-                                //     Navigator.push(context, MaterialPageRoute(builder: (context)=> Text(widget.postModel.imageUrl.toString())));
-                                //     break;
-                              // }
-          },
-
-                              child: widget.postModel.postType.contains("image") ?
-                              CacheImage(imageUrl: widget.postModel.imageUrl.first)
-                                  :
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width,
-                                height: MediaQuery.of(context).size.width * 9.0 / 16.0,
-                                // Use [Video] widget to display video output.
-                                child: Video(controller: _videoController),
-                              ),
-
-                          ) : const SizedBox(),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 8.0),
                             child: Text(widget.postModel.postDescription.toString()),

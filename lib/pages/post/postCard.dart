@@ -1,15 +1,21 @@
+import 'dart:typed_data';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit_app/components/cacheImage.dart';
+import 'package:reddit_app/components/postFileIcon.dart';
 import 'package:reddit_app/models/postModel.dart';
 import 'package:reddit_app/pages/post/postUpdatePage.dart';
 import 'package:reddit_app/pages/post/postView.dart';
 import 'package:reddit_app/pages/profile/bottomProfileModal.dart';
 import 'package:reddit_app/services/posts/post_services.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
 import '../../components/postActions.dart';
 
 
@@ -17,8 +23,10 @@ import '../../components/postActions.dart';
 
 class PostCard extends StatefulWidget {
   final PostModel postModel;
+  final bool isProfile;
   const PostCard({
     super.key,
+    required this.isProfile,
     required this.postModel,
   });
 
@@ -29,6 +37,19 @@ class PostCard extends StatefulWidget {
 class _PostCardState extends State<PostCard> {
   final PostServices _postServices = PostServices();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
+  Future<String?> fileGetter() async {
+    final fileName = await VideoThumbnail.thumbnailFile(
+      video: "https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4",
+      thumbnailPath: (await getTemporaryDirectory()).path,
+      imageFormat: ImageFormat.WEBP,
+      maxHeight: 64, // specify the height of the thumbnail, let the width auto-scaled to keep the source aspect ratio
+      quality: 75,
+    );
+    print("Hello");
+    print(fileName);
+    return "";
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +63,7 @@ class _PostCardState extends State<PostCard> {
           return const Center(child: Text(""));
         }
       return GestureDetector(
+        onLongPress: (){showPostPopUpMenu();},
         onTap: (){
           Navigator.push(context, MaterialPageRoute(
             builder: (context)=> PostView(
@@ -59,6 +81,7 @@ class _PostCardState extends State<PostCard> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    !widget.isProfile ?
                     Row(
                       children: [
                         CircleAvatar(
@@ -79,10 +102,11 @@ class _PostCardState extends State<PostCard> {
                         Text(("${DateTime.now().difference(widget.postModel.uploadedOn.toDate()).inHours}h"), style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 12),),
 
                       ],
-                    ),
-                    GestureDetector(
-                      onTap: (){showPostPopUpMenu();},
-                        child: const Icon(Icons.menu_outlined, color: Colors.grey,))
+                    ): const SizedBox(),
+                    // GestureDetector(
+                    //   onTap: (){showPostPopUpMenu();},
+                    //     child: const Icon(Icons.menu_outlined, color: Colors.grey,)
+                    // )
                   ],
                 ),
               ),
@@ -103,16 +127,7 @@ class _PostCardState extends State<PostCard> {
 
                     Row(
                       children: [
-                        Align(alignment: Alignment.center,child:
-                        widget.postModel.imageUrl.isNotEmpty ?
-                            SizedBox(
-                              width: 50,
-                              child: widget.postModel.postType=='image'?
-                              CacheImage(imageUrl: widget.postModel.imageUrl.first):
-                              const Icon(Icons.video_collection_outlined),
-                            )
-                            :
-                        const SizedBox(height: 0, width: 0)),
+                        Align(alignment: Alignment.center, child: PostFileIcon(url: widget.postModel.imageUrl)),
                       ],
                     )
 
