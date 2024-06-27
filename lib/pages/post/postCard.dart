@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
@@ -58,6 +59,7 @@ class _PostCardState extends State<PostCard> with AutomaticKeepAliveClientMixin{
 
         )));},
         child: Card(
+          clipBehavior: Clip.antiAlias,
           color: Colors.white,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -98,27 +100,16 @@ class _PostCardState extends State<PostCard> with AutomaticKeepAliveClientMixin{
                   ],
                 ),
               ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-
-                      children: [
-                        const SizedBox(height: 8.0),
-                        Text(widget.postModel.postTitle.toString(), style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 18, letterSpacing: 0.5),),
-                        const SizedBox(height: 8.0),
-                        Text(widget.postModel.postDescription.toString()),
-                        const SizedBox(height: 8.0),
-                      ],
-                    ),
-
-                    Row(
-                      children: [
-                        Align(alignment: Alignment.center, child: PostFileIcon(url: widget.postModel.imageUrl)),
-                      ],
-                    )
-
+                    const SizedBox(height: 8.0),
+                    Text(widget.postModel.postTitle.toString(), style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 18, letterSpacing: 0.5),),
+                    const SizedBox(height: 8.0),
+                    Align(alignment: Alignment.center,child: PostFileIcon(url: widget.postModel.imageUrl)),
+                    const SizedBox(height: 8.0),
+                    Text(widget.postModel.postDescription.toString()),
+                    const SizedBox(height: 8.0),
                   ],
                 ),
 

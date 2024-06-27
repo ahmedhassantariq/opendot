@@ -141,6 +141,8 @@ class _PostViewState extends State<PostView> {
                               if (snapshot.hasData) {
                                 return ListView.builder(
                                   shrinkWrap: true,
+                                  physics: const ScrollPhysics(),
+                                  scrollDirection: Axis.vertical,
                                   itemCount: snapshot.data!.length,
                                   itemBuilder: (BuildContext context, int index) {
                                     return CommentCard(commentModel: snapshot.data![index],);

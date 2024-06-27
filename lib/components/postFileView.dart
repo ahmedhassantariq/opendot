@@ -1,9 +1,13 @@
 
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:photo_view/photo_view.dart';
+import 'package:photo_view/photo_view_gallery.dart';
+import 'package:reddit_app/components/postImagePreview.dart';
 
 import 'package:reddit_app/components/postViewer.dart';
-
+import 'package:reddit_app/components/videoViewer.dart';
 import 'cacheImage.dart';
 
 class PostFileView extends StatefulWidget {
@@ -17,7 +21,6 @@ class PostFileView extends StatefulWidget {
 }
 
 class _PostFileViewState extends State<PostFileView> with TickerProviderStateMixin{
-
 
 
 
@@ -63,42 +66,22 @@ class _PostFileViewState extends State<PostFileView> with TickerProviderStateMix
   void initState() {
     // TODO: implement initState
     super.initState();
-    if(checkType()=='video'){
-      // videoPlayer.open(Media(widget.url.first), play: false);
-    }
   }
 
   @override
   void dispose() {
     // TODO: implement dispose
-    // videoPlayer.dispose();
+
     super.dispose();
   }
   @override
   Widget build(BuildContext context) {
     if(widget.url.isNotEmpty) {
       if (checkType() == 'image') {
-        return GestureDetector(
-          onTap: () {
-            Navigator.push(context, MaterialPageRoute(
-                builder: (context) => PostViewer(url: widget.url)));
-          },
-          child: CacheImage(imageUrl: widget.url.first),
-        );
+        return PostImagePreview(url: widget.url);
       }
       if (checkType() == 'video') {
-        return SizedBox(
-          width: MediaQuery
-              .of(context)
-              .size
-              .width,
-          height: MediaQuery
-              .of(context)
-              .size
-              .width * 9.0 / 16.0,
-          // Use [Video] widget to display video output.
-          child: Icon(Icons.video_call)
-        );
+        return VideoViewer(url: widget.url.first);
       }
       if (checkType() == 'file') {
         return IconButton(

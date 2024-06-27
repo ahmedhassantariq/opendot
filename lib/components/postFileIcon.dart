@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:reddit_app/components/postImagePreview.dart';
+import 'package:reddit_app/components/videoViewer.dart';
 
 import 'cacheImage.dart';
 
@@ -49,17 +51,14 @@ class PostFileIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if(checkType()=='image'){
-      return SizedBox(
-          width: 50,
-          child: CacheImage(imageUrl: url.first)
-      );
+      return PostImagePreview(url: url);
     }
     if(checkType()=='video'){
-      return const Icon(Icons.video_library);
+      return VideoViewer(url: url.first);
     }
     if(checkType()=='file'){
       return const Icon(Icons.file_copy_rounded);
     }
-    return SizedBox();
+    return const SizedBox();
   }
 }
