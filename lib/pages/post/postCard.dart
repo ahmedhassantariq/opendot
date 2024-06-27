@@ -15,7 +15,6 @@ import 'package:reddit_app/pages/post/postUpdatePage.dart';
 import 'package:reddit_app/pages/post/postView.dart';
 import 'package:reddit_app/pages/profile/bottomProfileModal.dart';
 import 'package:reddit_app/services/posts/post_services.dart';
-import 'package:video_thumbnail/video_thumbnail.dart';
 import '../../components/postActions.dart';
 
 
@@ -38,18 +37,6 @@ class _PostCardState extends State<PostCard> with AutomaticKeepAliveClientMixin{
   final PostServices _postServices = PostServices();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  Future<String?> fileGetter() async {
-    final fileName = await VideoThumbnail.thumbnailFile(
-      video: "https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4",
-      thumbnailPath: (await getTemporaryDirectory()).path,
-      imageFormat: ImageFormat.WEBP,
-      maxHeight: 64, // specify the height of the thumbnail, let the width auto-scaled to keep the source aspect ratio
-      quality: 75,
-    );
-    print("Hello");
-    print(fileName);
-    return "";
-  }
 
   @override
   Widget build(BuildContext context) {

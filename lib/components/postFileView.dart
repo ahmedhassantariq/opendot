@@ -1,10 +1,7 @@
-import 'dart:html';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:media_kit/media_kit.dart';
-import 'package:media_kit_video/media_kit_video.dart';
-import 'package:piano/piano.dart';
+
 import 'package:reddit_app/components/postViewer.dart';
 
 import 'cacheImage.dart';
@@ -20,13 +17,7 @@ class PostFileView extends StatefulWidget {
 }
 
 class _PostFileViewState extends State<PostFileView> with TickerProviderStateMixin{
-  late final videoPlayer = Player();
 
-  late final _videoController = VideoController(
-      videoPlayer,
-      configuration: const VideoControllerConfiguration(enableHardwareAcceleration: true)
-
-  );
 
 
 
@@ -73,14 +64,14 @@ class _PostFileViewState extends State<PostFileView> with TickerProviderStateMix
     // TODO: implement initState
     super.initState();
     if(checkType()=='video'){
-      videoPlayer.open(Media(widget.url.first), play: false);
+      // videoPlayer.open(Media(widget.url.first), play: false);
     }
   }
 
   @override
   void dispose() {
     // TODO: implement dispose
-    videoPlayer.dispose();
+    // videoPlayer.dispose();
     super.dispose();
   }
   @override
@@ -106,19 +97,17 @@ class _PostFileViewState extends State<PostFileView> with TickerProviderStateMix
               .size
               .width * 9.0 / 16.0,
           // Use [Video] widget to display video output.
-          child: Video(
-              controller: _videoController,
-          ),
+          child: Icon(Icons.video_call)
         );
       }
       if (checkType() == 'file') {
         return IconButton(
             onPressed: () {
-              AnchorElement anchor = AnchorElement(href: widget.url.first);
-              AnchorElement
-                  .created()
-                  .download = 'File';
-              anchor.click();
+              // AnchorElement anchor = AnchorElement(href: widget.url.first);
+              // AnchorElement
+              //     .created()
+              //     .download = 'File';
+              // anchor.click();
             },
             icon: const Icon(Icons.download)
         );
