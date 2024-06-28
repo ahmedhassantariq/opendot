@@ -22,7 +22,7 @@ class _PostViewerState extends State<PostViewer> {
       appBar: AppBar(
         backgroundColor: Colors.black,
         leading: IconButton(onPressed: (){Navigator.pop(context);}, icon: const Icon(Icons.close,color: Colors.white,)),
-        actions: const [Icon(Icons.bookmark_border_outlined)],
+        actions: [IconButton(onPressed: (){}, icon: const Icon(Icons.bookmark_border_outlined,color: Colors.white,))],
       ),
       body: Center(
           child: PhotoView(imageProvider: NetworkImage(widget.url))

@@ -2,13 +2,17 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:reddit_app/components/postFileIcon.dart';
+import 'package:reddit_app/models/postFileModel.dart';
 import 'package:reddit_app/models/postModel.dart';
 
 import '../../components/postTextfield.dart';
-import '../../services/firebase/firebase_services.dart';
 import '../../services/posts/post_services.dart';
 
 class UpdatePostPage extends StatefulWidget {
@@ -25,13 +29,16 @@ class UpdatePostPage extends StatefulWidget {
 }
 
 class _UpdatePostPageState extends State<UpdatePostPage> {
-  late TextEditingController _postTextFieldTitleController = TextEditingController();
-  late TextEditingController _postTextFieldBodyController = TextEditingController();
+  final TextEditingController _postTextFieldTitleController = TextEditingController();
+  final TextEditingController _postTextFieldBodyController = TextEditingController();
   late final PostServices _postServices = PostServices();
   final ImagePicker picker = ImagePicker();
   late List<dynamic> imageUrl = [];
   double iconSize = 30;
   bool isUploading = false;
+  double uploadProgress = 0;
+  bool pause = false;
+  bool cancel = false;
 
   @override
   void initState() {
@@ -100,14 +107,15 @@ class _UpdatePostPageState extends State<UpdatePostPage> {
               PostTextField(controller: _postTextFieldBodyController, hintText: "Body", obscureText: false, fontSize: 16,),
               for(int i=0;i<imageUrl.length;i++)
                 imageUrl.isNotEmpty ?
-                Column(
+                Stack(
                   children: [
-                    IconButton(onPressed: (){setState(() {
-                      imageUrl.removeAt(i);
-                    });}, icon: const Icon(Icons.delete_outline)),
-                    Container(
-                        alignment: Alignment.center,child:
-                    CachedNetworkImage(imageUrl: imageUrl[i],placeholder: (context, url) => const CircularProgressIndicator(), errorWidget: (context, url, error) => const Icon(Icons.image_not_supported_outlined))),
+                    PostFileIcon(url: imageUrl[i],),
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: IconButton(onPressed: (){setState(() {
+                        imageUrl.removeAt(i);
+                      });}, icon: const Icon(Icons.delete_outline, color: Colors.red,)),
+                    )
                   ],
                 )
                     :const SizedBox(width: 0,height: 0,),
@@ -130,24 +138,68 @@ class _UpdatePostPageState extends State<UpdatePostPage> {
                 Icon(Icons.gif_box_outlined, color: Colors.grey, size: iconSize),
                 const SizedBox(width: 8.0,),
                 GestureDetector(
-                    onTap: () async {
-                      final pickedImage = await picker.pickImage(source: ImageSource.gallery);
-                      if(pickedImage?.path!=null) {
-                        File file = File(pickedImage!.path);
-                        Image image = Image.memory(await pickedImage.readAsBytes());
-                        Uint8List img = await pickedImage.readAsBytes();
-                        setState(() {
-                          isUploading = true;
-                        });
-                        _postServices.uploadImage(pickedImage.name, img)
-                            .then((value){ imageUrl.add(value);
-                        setState(() {
-                          isUploading = false;
-                        });});
-                      }
+                    onTap: !isUploading ? () async {
+                      // final pickedImage = await picker.pickImage(source: ImageSource.gallery, imageQuality: 0);
+                      FilePickerResult? pickedImage = await FilePicker.platform.pickFiles(
+                        allowMultiple: true,
+                        type: FileType.any,
+                      );
+                      if(pickedImage!=null) {
+                        pickedImage.files.forEach((element) {
+                          Uint8List? img = element.bytes;
+                          setState(() {
+                            isUploading = true;
+                          });
+                          final storageReference = FirebaseStorage.instance.ref();
+                          final SettableMetadata metaData = SettableMetadata(customMetadata: {
+                            "extension":element.extension.toString(),
+                            "name":element.name
+                          });
+                          final uploadTask = storageReference.child('images/${element.name}').putData(img!,metaData);
+                          uploadTask.snapshotEvents.listen((TaskSnapshot taskSnapshot) {
+                            switch (taskSnapshot.state) {
+                              case TaskState.running:
+                                setState(() {
+                                  uploadProgress = (taskSnapshot.bytesTransferred / taskSnapshot.totalBytes);
+                                  if(cancel){
+                                    uploadTask.cancel();
+                                    setState(() {
+                                      isUploading = false;
+                                      cancel = false;
+                                    });
+                                  }
+                                });
+                                break;
+                              case TaskState.paused:
+                                break;
+                              case TaskState.canceled:
+                                break;
+                              case TaskState.error:
+                                setState(() {
+                                  isUploading = false;
+                                });
+                                break;
+                              case TaskState.success:
 
-                    },
-                    child: const Icon(Icons.photo_outlined, color: Colors.grey))
+                                _postServices.getUrl(element.name).then((value){
+                                  imageUrl.add(PostFileModel(url: value,name: element.name, extension: element.extension.toString()).toMap());
+                                  setState(() {
+                                    isUploading = false;
+                                  });
+
+                                });
+                                break;
+                            }
+                          });
+                        });
+
+
+
+
+                      }
+                    } : (){},
+                    child: const Icon(Icons.photo_outlined, color: Colors.grey)
+                )
               ],
             ),
           ),

@@ -1,10 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:reddit_app/components/CONSTANTS.dart';
 import 'package:reddit_app/components/postImagePreview.dart';
 import 'package:reddit_app/components/videoViewer.dart';
 
 import '../models/postFileModel.dart';
-import 'cacheImage.dart';
 
 class PostFileIcon extends StatelessWidget {
   final Map<String, dynamic> url;
@@ -14,20 +14,26 @@ class PostFileIcon extends StatelessWidget {
     required this.url});
 
 
-
-
   @override
   Widget build(BuildContext context) {
       final model  = PostFileModel.fromJson(url);
       final type = Constants().checkType(model.extension);
     if(type=='image'){
-      return PostImagePreview(url: model.url);
+      return Center(child: PostImagePreview(url: model.url));
     }
     if(type=='video'){
-      return VideoViewer(url: model.url);
+      return Center(child: VideoViewer(url: model.url));
     }
     if(type=='file'){
-      return const Icon(Icons.file_copy_rounded);
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.attach_file),
+            Text(model.name.toString()),
+          ],
+        ),
+      );
     }
     return const SizedBox();
   }

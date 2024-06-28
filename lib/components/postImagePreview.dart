@@ -24,13 +24,20 @@ class _PostImagePreviewState extends State<PostImagePreview> {
         Navigator.push(context, MaterialPageRoute(
             builder: (context) => PostViewer(url: widget.url)));
       },
-      child: PhotoView(
-          disableGestures: true,
-          filterQuality: FilterQuality.low,
-          wantKeepAlive: true,
-          imageProvider: NetworkImage(
-              widget.url
-          ))
+      child: SizedBox(
+        width: 200,
+        height: 200,
+        child: PhotoView(
+
+          backgroundDecoration: BoxDecoration(borderRadius: BorderRadius.circular(8.0)),
+            disableGestures: true,
+            filterQuality: FilterQuality.low,
+            wantKeepAlive: true,
+            imageProvider: NetworkImage(
+                widget.url
+            )
+        ),
+      )
 
     );
   }

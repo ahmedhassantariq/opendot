@@ -9,6 +9,7 @@ import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:reddit_app/components/CONSTANTS.dart';
 import 'package:reddit_app/components/cacheImage.dart';
 import 'package:reddit_app/components/postFileIcon.dart';
 import 'package:reddit_app/models/postModel.dart';
@@ -87,16 +88,11 @@ class _PostCardState extends State<PostCard> with AutomaticKeepAliveClientMixin{
                         Text(snapshot.data!.userName, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12))
                         :
                         const SizedBox(),
-
                         const SizedBox(width: 8.0),
-                        Text(("${DateTime.now().difference(widget.postModel.uploadedOn.toDate()).inHours}h"), style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 12),),
+                        Text((Constants().toTime(widget.postModel.uploadedOn)), style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 12),),
 
                       ],
-                    ): const SizedBox(),
-                    // GestureDetector(
-                    //   onTap: (){showPostPopUpMenu();},
-                    //     child: const Icon(Icons.menu_outlined, color: Colors.grey,)
-                    // )
+                    ): const SizedBox()
                   ],
                 ),
               ),
@@ -106,7 +102,10 @@ class _PostCardState extends State<PostCard> with AutomaticKeepAliveClientMixin{
                     const SizedBox(height: 8.0),
                     Text(widget.postModel.postTitle.toString(), style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 18, letterSpacing: 0.5),),
                     const SizedBox(height: 8.0),
-                    PostViewList(imageUrl: widget.postModel.imageUrl),
+                    widget.postModel.imageUrl.isNotEmpty ?
+                    PostViewList(imageUrl: widget.postModel.imageUrl)
+                    :
+                    const SizedBox(),
                     const SizedBox(height: 8.0),
                     Text(widget.postModel.postDescription.toString()),
                     const SizedBox(height: 8.0),

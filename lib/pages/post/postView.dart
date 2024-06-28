@@ -14,6 +14,7 @@ import 'package:reddit_app/pages/drawer/endDrawer.dart';
 import 'package:reddit_app/pages/post/postUpdatePage.dart';
 import 'package:reddit_app/pages/post/sharePostPage.dart';
 import 'package:reddit_app/services/posts/post_services.dart';
+import '../../components/CONSTANTS.dart';
 import '../profile/bottomProfileModal.dart';
 
 
@@ -109,7 +110,7 @@ class _PostViewState extends State<PostView> {
                                               const SizedBox(width: 8.0),
                                               Text(snapshot.data!.userName, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
                                               const SizedBox(width: 8.0),
-                                              Text(("${DateTime.now().difference(widget.postModel.uploadedOn.toDate()).inHours}h"), style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 12),),
+                                              Text((Constants().toTime(widget.postModel.uploadedOn)), style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 12),),
                                             ]),
                                         GestureDetector(
                                             onTap: (){showPostPopUpMenu();},
@@ -127,14 +128,17 @@ class _PostViewState extends State<PostView> {
                           ),
                           const SizedBox(height: 8.0),
 
-                          PostViewList(imageUrl: widget.postModel.imageUrl),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: PostViewList(imageUrl: widget.postModel.imageUrl),
+                          ),
 
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 8.0),
                             child: Text(widget.postModel.postDescription.toString()),
                           ),
                           const SizedBox(height: 8.0),
-                          StreamBuilder<List<CommentModel>>( // inside the <> you enter the type of your stream
+                          StreamBuilder<List<CommentModel>>(
                             stream: _postServices.getCommentData(widget.postModel.postID),
                             builder: (context, snapshot) {
                               if (snapshot.hasData) {

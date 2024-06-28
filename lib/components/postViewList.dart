@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'postFileIcon.dart';
@@ -12,14 +13,16 @@ class PostViewList extends StatefulWidget {
 }
 
 class _PostViewListState extends State<PostViewList> {
-  final PageController _controller = PageController(viewportFraction: 1);
+  final PageController _controller = PageController(viewportFraction: 1, keepPage: true);
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8.0)),
       margin: const EdgeInsets.symmetric(vertical: 20),
       height: 200,
       child: PageView.builder(
+        pageSnapping: true,
         controller: _controller,
         scrollDirection: Axis.horizontal,
         itemCount: widget.imageUrl.length,
@@ -31,7 +34,17 @@ class _PostViewListState extends State<PostViewList> {
                 if (_controller.position.hasContentDimensions) {
                   factor = 1 - (_controller.page! - index).abs();
                 }
-                return PostFileIcon(url: widget.imageUrl[index]);
+                return Stack(
+                    children: [
+                      PostFileIcon(url: widget.imageUrl[index]),
+                      widget.imageUrl.length>1 ?
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+                          child: Text("${index+1}/${widget.imageUrl.length}",style: const TextStyle(color: Colors.red),),
+                        ),):const SizedBox()
+                    ]);
 
               } );
         }));

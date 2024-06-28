@@ -5,7 +5,9 @@ import 'dart:typed_data';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -34,7 +36,6 @@ class _CreatePostPageState extends State<CreatePostPage> {
   double uploadProgress = 0;
   bool pause = false;
   bool cancel = false;
-  String fileType = "";
 
 
 @override
@@ -105,7 +106,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                         imageUrl.removeAt(i);
                       });
                       }, icon: const Icon(Icons.delete_outline)),
-                    // PostFileIcon(url: <dynamic>[imageUrl[i]])
+                    PostFileIcon(url: imageUrl[i])
 
                   ],
                 ))
@@ -136,7 +137,6 @@ class _CreatePostPageState extends State<CreatePostPage> {
                         type: FileType.any,
                       );
                       if(pickedImage!=null) {
-
                         pickedImage.files.forEach((element) {
                           Uint8List? img = element.bytes;
                           setState(() {
