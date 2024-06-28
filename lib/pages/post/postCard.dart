@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 import 'package:reddit_app/components/cacheImage.dart';
 import 'package:reddit_app/components/postFileIcon.dart';
 import 'package:reddit_app/models/postModel.dart';
+import 'package:reddit_app/components/postViewList.dart';
 import 'package:reddit_app/pages/post/postUpdatePage.dart';
 import 'package:reddit_app/pages/post/postView.dart';
 import 'package:reddit_app/pages/profile/bottomProfileModal.dart';
@@ -37,7 +38,6 @@ class PostCard extends StatefulWidget {
 class _PostCardState extends State<PostCard> with AutomaticKeepAliveClientMixin{
   final PostServices _postServices = PostServices();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-
 
   @override
   Widget build(BuildContext context) {
@@ -106,7 +106,7 @@ class _PostCardState extends State<PostCard> with AutomaticKeepAliveClientMixin{
                     const SizedBox(height: 8.0),
                     Text(widget.postModel.postTitle.toString(), style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 18, letterSpacing: 0.5),),
                     const SizedBox(height: 8.0),
-                    Align(alignment: Alignment.center,child: PostFileIcon(url: widget.postModel.imageUrl)),
+                    PostViewList(imageUrl: widget.postModel.imageUrl),
                     const SizedBox(height: 8.0),
                     Text(widget.postModel.postDescription.toString()),
                     const SizedBox(height: 8.0),

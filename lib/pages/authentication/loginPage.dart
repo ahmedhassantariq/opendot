@@ -60,9 +60,13 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 25),
                   const Text("Welcome back. You\'ve been missed.", style: TextStyle(fontSize: 16),),
                   const SizedBox(height: 25),
-                  MyTextField(controller: emailController, hintText: 'Email', obscureText: false),
+                  MyTextField(
+                      onSubmitted: (e){signIn();},
+                      controller: emailController, hintText: 'Email', obscureText: false),
                   const SizedBox(height: 25),
-                  MyTextField(controller: passwordController, hintText: 'Password', obscureText: true),
+                  MyTextField(
+                    onSubmitted: (e){signIn();},
+                      controller: passwordController, hintText: 'Password', obscureText: true),
                   const SizedBox(height: 25),
                   SignInButton(
                       padding: const EdgeInsets.symmetric(vertical: 23, horizontal: 15),

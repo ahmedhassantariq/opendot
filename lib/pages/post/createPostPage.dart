@@ -10,6 +10,9 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:reddit_app/components/CONSTANTS.dart';
+import 'package:reddit_app/components/postFileIcon.dart';
+import 'package:reddit_app/models/postFileModel.dart';
 import 'package:reddit_app/services/posts/post_services.dart';
 
 import '../../components/postTextfield.dart';
@@ -25,51 +28,20 @@ class _CreatePostPageState extends State<CreatePostPage> {
   final TextEditingController _postTextFieldBodyController = TextEditingController();
   late final PostServices _postServices = PostServices();
   final ImagePicker picker = ImagePicker();
-  late List<String> imageUrl = [];
+  late List<dynamic> imageUrl = [];
   double iconSize = 30;
   bool isUploading = false;
   double uploadProgress = 0;
   bool pause = false;
   bool cancel = false;
-
-  checkType(){
-    String postType = "post";
-    if(imageUrl.isNotEmpty) {
-      String s = imageUrl.first;
-      String one = s.substring(s.indexOf("/images%"), s.indexOf("?"));
-      String two = one.substring(one.indexOf("."));
-      switch (two) {
-        case ".png":
-          postType = "image";
-          break;
-        case ".jpg":
-          postType = "image";
-          break;
-        case ".jpeg":
-          postType = "image";
-          break;
-        case ".mp4":
-          postType = "video";
-          break;
-        case ".mov":
-          postType = "video";
-          break;
-        case ".mp3":
-          postType = "video";
-          break;
-        case ".wav":
-          postType = "video";
-          break;
+  String fileType = "";
 
 
-
-        default:
-          postType = "file";
-      }
-    }
-    return postType;
+@override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
   }
-
   
   @override
   Widget build(BuildContext context) {
@@ -94,13 +66,12 @@ class _CreatePostPageState extends State<CreatePostPage> {
                         icon: const Icon(Icons.close)),
                     !isUploading ? TextButton(
                       onPressed: (){
-                        checkType();
                         if(_postTextFieldTitleController.text.isNotEmpty){
                           _postServices.createPost(
                               _postTextFieldTitleController.text,
                               _postTextFieldBodyController.text,
                               imageUrl,
-                            checkType()
+                            "file"
                           );
                           Navigator.pop(context);
                           Provider.of<PostServices>(context, listen: false).notifyListeners();
@@ -131,13 +102,10 @@ class _CreatePostPageState extends State<CreatePostPage> {
                   children: [
                     IconButton(onPressed: (){
                       setState(() {
-                        imageUrl.removeWhere((element) => element==imageUrl[i]);
+                        imageUrl.removeAt(i);
                       });
                       }, icon: const Icon(Icons.delete_outline)),
-                    checkType()=="image"  ?
-                    CachedNetworkImage(imageUrl: imageUrl[i],placeholder: (context, url) => const CircularProgressIndicator(), errorWidget: (context, url, error) => const Icon(Icons.image_not_supported_outlined)):
-                    const Icon(Icons.video_library_outlined)
-                    ,
+                    // PostFileIcon(url: <dynamic>[imageUrl[i]])
 
                   ],
                 ))
@@ -164,50 +132,60 @@ class _CreatePostPageState extends State<CreatePostPage> {
                     onTap: !isUploading ? () async {
                       // final pickedImage = await picker.pickImage(source: ImageSource.gallery, imageQuality: 0);
                       FilePickerResult? pickedImage = await FilePicker.platform.pickFiles(
-                        type: FileType.image,
+                        allowMultiple: true,
+                        type: FileType.any,
                       );
                       if(pickedImage!=null) {
-                        PlatformFile file = pickedImage.files.first;
-                        // File file = File(pickedImage!.path);
-                        // Image image = Image.memory(await pickedImage.readAsBytes());
-                        Uint8List? img = pickedImage.files.single.bytes;
-                        setState(() {
-                          isUploading = true;
+
+                        pickedImage.files.forEach((element) {
+                          Uint8List? img = element.bytes;
+                          setState(() {
+                            isUploading = true;
+                          });
+                          final storageReference = FirebaseStorage.instance.ref();
+                          final SettableMetadata metaData = SettableMetadata(customMetadata: {
+                            "extension":element.extension.toString(),
+                            "name":element.name
+                          });
+                          final uploadTask = storageReference.child('images/${element.name}').putData(img!,metaData);
+                          uploadTask.snapshotEvents.listen((TaskSnapshot taskSnapshot) {
+                            switch (taskSnapshot.state) {
+                              case TaskState.running:
+                                setState(() {
+                                  uploadProgress = (taskSnapshot.bytesTransferred / taskSnapshot.totalBytes);
+                                  if(cancel){
+                                    uploadTask.cancel();
+                                    setState(() {
+                                      isUploading = false;
+                                      cancel = false;
+                                    });
+                                  }
+                                });
+                                break;
+                              case TaskState.paused:
+                                break;
+                              case TaskState.canceled:
+                                break;
+                              case TaskState.error:
+                                setState(() {
+                                  isUploading = false;
+                                });
+                                break;
+                              case TaskState.success:
+
+                                _postServices.getUrl(element.name).then((value){
+                                  imageUrl.add(PostFileModel(url: value,name: element.name, extension: element.extension.toString()).toMap());
+                                setState(() {
+                                  isUploading = false;
+                                });
+
+                                });
+                                break;
+                            }
+                          });
                         });
-                        final storageReference = FirebaseStorage.instance.ref();
-                        final uploadTask = storageReference.child('images/${pickedImage.files.single.name}').putData(img!);
-                        uploadTask.snapshotEvents.listen((TaskSnapshot taskSnapshot) {
-                          switch (taskSnapshot.state) {
-                            case TaskState.running:
-                               setState(() {
-                                 uploadProgress = (taskSnapshot.bytesTransferred / taskSnapshot.totalBytes);
-                                 if(cancel){
-                                   uploadTask.cancel();
-                                   setState(() {
-                                     isUploading = false;
-                                     cancel = false;
-                                   });
-                                 }
-                               });
-                              break;
-                            case TaskState.paused:
-                              break;
-                            case TaskState.canceled:
-                              print("Upload was canceled");
-                              break;
-                            case TaskState.error:
-                              setState(() {
-                                isUploading = false;
-                              });
-                              break;
-                            case TaskState.success:
-                              _postServices.getUrl(pickedImage.files.single.name).then((value){imageUrl.add(value);
-                              setState(() {
-                                isUploading = false;
-                              });});
-                              break;
-                          }
-                        });
+
+
 
 
                       }

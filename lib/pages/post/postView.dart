@@ -5,16 +5,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit_app/components/commentTextfield.dart';
-import 'package:reddit_app/components/postFileView.dart';
 import 'package:reddit_app/components/shimmer.dart';
 import 'package:reddit_app/models/commentModel.dart';
 import 'package:reddit_app/models/postModel.dart';
+import 'package:reddit_app/components/postViewList.dart';
 import 'package:reddit_app/pages/post/comment/commentCard.dart';
 import 'package:reddit_app/pages/drawer/endDrawer.dart';
 import 'package:reddit_app/pages/post/postUpdatePage.dart';
 import 'package:reddit_app/pages/post/sharePostPage.dart';
 import 'package:reddit_app/services/posts/post_services.dart';
-import 'package:shimmer/shimmer.dart';
 import '../profile/bottomProfileModal.dart';
 
 
@@ -128,10 +127,10 @@ class _PostViewState extends State<PostView> {
                           ),
                           const SizedBox(height: 8.0),
 
-                          PostFileView(url: widget.postModel.imageUrl),
+                          PostViewList(imageUrl: widget.postModel.imageUrl),
 
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                            padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 8.0),
                             child: Text(widget.postModel.postDescription.toString()),
                           ),
                           const SizedBox(height: 8.0),

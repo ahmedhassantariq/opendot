@@ -250,7 +250,7 @@ class _ChatRoomState extends State<ChatRoom> {
               onSubmitted: (String e) {
                 submitComment();
               },
-              icon: Icon(Icons.edit),
+              icon: const Icon(Icons.edit),
             ),
           );
         });

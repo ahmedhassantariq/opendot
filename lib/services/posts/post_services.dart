@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:reddit_app/models/commentModel.dart';
+import 'package:reddit_app/models/postFileModel.dart';
 import 'package:reddit_app/models/postInfoModel.dart';
 import 'package:reddit_app/models/postModel.dart';
 import 'package:reddit_app/models/userDataModel.dart';
@@ -129,7 +130,6 @@ class PostServices extends ChangeNotifier{
   Future<String>getUrl(String pickedImageName) async {
     final storageReference = FirebaseStorage.instance.ref(
         "images/$pickedImageName");
-
     return await storageReference.getDownloadURL();
   }
 

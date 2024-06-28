@@ -82,11 +82,11 @@ class _UserSettingsState extends State<UserSettings> {
                 },
                   child: CircleAvatar(backgroundImage: NetworkImage(snapshot.data!.imageUrl),minRadius: 50,)),
               const SizedBox(height: 8.0),
-              MyTextField(controller: _userNameController, hintText: "User Name", obscureText: false),
+              MyTextField(onSubmitted:(e){},controller: _userNameController, hintText: "User Name", obscureText: false),
               const SizedBox(height: 8.0),
-              MyTextField(controller: _displayNameController, hintText: "Display Name", obscureText: false),
+              MyTextField(onSubmitted:(e){},controller: _displayNameController, hintText: "Display Name", obscureText: false),
               const SizedBox(height: 8.0),
-              MyTextField(controller: _phoneNumberController, hintText: "Phone Number", obscureText: false),
+              MyTextField(onSubmitted:(e){},controller: _phoneNumberController, hintText: "Phone Number", obscureText: false),
               const SizedBox(height: 8.0),
               TextButton(
                 onPressed: (){

@@ -35,9 +35,9 @@ class _VideoViewerState extends State<VideoViewer> {
       _controller,
       allowScrubbing: true,
       colors: const VideoProgressColors(
-        backgroundColor: Colors.white,
-        // bufferedColor: Colors.yellow,
-        playedColor: Color(0xff18BAE8),
+        backgroundColor: Colors.black,
+        bufferedColor: Colors.grey,
+        playedColor: Colors.red,
       ),
     );
   }

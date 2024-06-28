@@ -4,11 +4,9 @@ import 'package:photo_view/photo_view_gallery.dart';
 import 'package:reddit_app/components/cacheImage.dart';
 
 class PostViewer extends StatefulWidget {
-  final List<dynamic> url;
-  final int currentPageIndex;
+  final String url;
   const PostViewer({
     required this.url,
-    required this.currentPageIndex,
     super.key
   });
 
@@ -17,7 +15,6 @@ class PostViewer extends StatefulWidget {
 }
 
 class _PostViewerState extends State<PostViewer> {
-  late String currentPage = "${widget.currentPageIndex+1}/${widget.url.length}";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,34 +25,8 @@ class _PostViewerState extends State<PostViewer> {
         actions: const [Icon(Icons.bookmark_border_outlined)],
       ),
       body: Center(
-          child: Stack(
-            children: [
-              PhotoViewGallery.builder(
-                pageController: PageController(initialPage: widget.currentPageIndex),
-                onPageChanged: (i){setState(() {
-                  currentPage = "${i+1}/${widget.url.length}";
-                });},
-                scrollPhysics: const BouncingScrollPhysics(),
-                builder: (context, index){
-                  return PhotoViewGalleryPageOptions(
-                    imageProvider: NetworkImage(widget.url[index]),
-                    initialScale: PhotoViewComputedScale.contained,
-                    errorBuilder: (context, obj, trace) => const Icon(Icons.error_outline)
-                  );
-                },
-                itemCount: widget.url.length,
-                loadingBuilder: (context, event) => const Center(
-                  child: CircularProgressIndicator(),
-                )
-
-            ),
-              (widget.url.length>1) ? Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Align(alignment: Alignment.topRight,child: Text(currentPage,style: const TextStyle(color: Colors.white),),),
-              ):const SizedBox(),
-
-            ])
-      ),
+          child: PhotoView(imageProvider: NetworkImage(widget.url))
+      )
     );
   }
 }
