@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:reddit_app/components/shimmerList.dart';
 import 'package:reddit_app/models/postModel.dart';
 import 'package:reddit_app/pages/post/postCard.dart';
 import 'package:reddit_app/services/posts/post_services.dart';
@@ -15,52 +14,55 @@ class ScrollViewPage extends StatefulWidget {
 }
 
 class _ScrollViewPageState extends State<ScrollViewPage> {
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final PostServices _postServices = PostServices();
-  final StreamController<Stream<List<PostModel>>> streamController = StreamController();
-
+  final StreamController<List<PostModel>> streamController = StreamController.broadcast();
+  final ScrollController _scrollController = ScrollController();
 
 
   Future<void> refreshScrollView() async {
     setState(() {
-      streamController.add(_postServices.getPostData());
+
     });
+  }
+
+
+
+  Future<List<PostModel>> getStream(){
+    final list = _postServices.getPostData().first;
+    return list;
   }
   @override
   void initState() {
-    streamController.add(_postServices.getPostData());
+    streamController.addStream(_postServices.getPostData());
     super.initState();
   }
 
-
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<PostModel>>(
-      stream: _postServices.getPostData(),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return RefreshIndicator(
-            onRefresh: refreshScrollView,
-            child: ListView.builder(
-              addAutomaticKeepAlives: true,
-              shrinkWrap: true,
-              scrollDirection: Axis.vertical,
-              itemCount: snapshot.data!.length,
-              itemBuilder: (BuildContext context, int index) {
-                return PostCard(
-                  postModel: snapshot.data![index],
-                  isProfile: false,
-                );
-              },
-            ),
+    return RefreshIndicator(
+      onRefresh: refreshScrollView,
+      child: FutureBuilder<List<PostModel>>(
+        future: getStream(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          final items = snapshot.data!;
+          return ListView.builder(
+            // prototypeItem: Text(""),
+            controller: _scrollController,
+            key: const ValueKey('list_view'),
+            itemCount: items.length,
+            itemBuilder: (context, index) {
+              return PostCard(
+                key: ValueKey(items[index].postID),
+                postModel: items[index],
+                isProfile: false,
+              );
+            },
           );
-        }
-        if (snapshot.hasError) {
-          return const Center(child: Text('Error'));
-        } else {
-          return const ShimmerList();
-        }
-      },
+        },
+      ),
     );
   }
 }

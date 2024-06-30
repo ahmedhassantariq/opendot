@@ -98,18 +98,19 @@ class _CreatePostPageState extends State<CreatePostPage> {
               for(int i=0;i<imageUrl.length;i++)
                 imageUrl.isNotEmpty ?
                 Container(
-                  alignment: Alignment.center,child:
-                Column(
-                  children: [
-                    IconButton(onPressed: (){
-                      setState(() {
-                        imageUrl.removeAt(i);
-                      });
-                      }, icon: const Icon(Icons.delete_outline)),
-                    PostFileIcon(url: imageUrl[i])
-
-                  ],
-                ))
+                  margin: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Stack(
+                    children: [
+                      PostFileIcon(url: imageUrl[i],),
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: IconButton(onPressed: (){setState(() {
+                          imageUrl.removeAt(i);
+                        });}, icon: const Icon(Icons.delete_outline, color: Colors.red,)),
+                      )
+                    ],
+                  ),
+                )
                   :const SizedBox(width: 0,height: 0,),
             ],
           ),

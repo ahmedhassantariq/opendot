@@ -38,5 +38,19 @@ class PostModel {
     ));
   }
 
+  factory PostModel.fromJson(QueryDocumentSnapshot documentSnapshot){
+    return (PostModel(
+      postType: documentSnapshot.get('postType'),
+      postID: documentSnapshot.get('postID'),
+      postTitle: documentSnapshot.get('postTitle'),
+      uploadedBy: documentSnapshot.get('uploadedBy'),
+      postDescription: documentSnapshot.get('postDescription'),
+      uploadedOn: documentSnapshot.get('uploadedOn'),
+      upVotes: documentSnapshot.get('upVotes'),
+      imageUrl: documentSnapshot.get('imageUrl'),
+      downVotes: documentSnapshot.get('downVotes'),
+    ));
+  }
+
 
 }

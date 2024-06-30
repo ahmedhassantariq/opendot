@@ -14,7 +14,28 @@ class PostViewList extends StatefulWidget {
 
 class _PostViewListState extends State<PostViewList> {
   final PageController _controller = PageController(viewportFraction: 1, keepPage: true);
+  double paginationOpacity = 1.0;
 
+  setPaginationOpacity(){
+    paginationOpacity = 1.0;
+      Future.delayed(const Duration(seconds: 3), () {
+        setState(() {
+          paginationOpacity = 0.0;
+        });
+      });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(() {
+    });
+  }
+  @override
+  void dispose() {
+    _controller.notifyListeners();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -42,7 +63,10 @@ class _PostViewListState extends State<PostViewList> {
                         alignment: Alignment.topRight,
                         child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
-                          child: Text("${index+1}/${widget.imageUrl.length}",style: const TextStyle(color: Colors.red),),
+                          child: AnimatedOpacity(
+                              opacity: paginationOpacity,
+                              duration: const Duration(seconds: 1),
+                              child: Text("${index+1}/${widget.imageUrl.length}",style: const TextStyle(color: Colors.white),)),
                         ),):const SizedBox()
                     ]);
 

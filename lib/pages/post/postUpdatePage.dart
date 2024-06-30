@@ -107,22 +107,25 @@ class _UpdatePostPageState extends State<UpdatePostPage> {
               PostTextField(controller: _postTextFieldBodyController, hintText: "Body", obscureText: false, fontSize: 16,),
               for(int i=0;i<imageUrl.length;i++)
                 imageUrl.isNotEmpty ?
-                Stack(
-                  children: [
-                    PostFileIcon(url: imageUrl[i],),
-                    Align(
-                      alignment: Alignment.topRight,
-                      child: IconButton(onPressed: (){setState(() {
-                        imageUrl.removeAt(i);
-                      });}, icon: const Icon(Icons.delete_outline, color: Colors.red,)),
-                    )
-                  ],
+                Container(
+                  margin: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Stack(
+                    children: [
+                      PostFileIcon(url: imageUrl[i],),
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: IconButton(onPressed: (){setState(() {
+                          imageUrl.removeAt(i);
+                        });}, icon: const Icon(Icons.delete_outline, color: Colors.red,)),
+                      )
+                    ],
+                  ),
                 )
                     :const SizedBox(width: 0,height: 0,),
             ],
           ),
         ),
-        isUploading ? LinearProgressIndicator() : SizedBox(width:0,height: 0,),
+        isUploading ? const LinearProgressIndicator() : const SizedBox(width:0,height: 0,),
         Container(
           height: 56,
           color: Colors.white,

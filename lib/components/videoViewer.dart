@@ -64,7 +64,8 @@ class _VideoViewerState extends State<VideoViewer> {
         }
       },
       child: Container(
-        color: Colors.black,
+        decoration: BoxDecoration(color: Colors.black,borderRadius: BorderRadius.circular(8.0)),
+        // color: Colors.black,
           width: MediaQuery
               .of(context)
               .size
@@ -73,7 +74,6 @@ class _VideoViewerState extends State<VideoViewer> {
               .of(context)
               .size
               .width * 9.0 / 16.0,
-          // Use [Video] widget to display video output.
           child: Stack(
             alignment: Alignment.bottomCenter,
             children: <Widget>[

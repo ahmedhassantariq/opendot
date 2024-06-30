@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:reddit_app/pages/post/comment/commentCard.dart';
 
 class CommentModel {
 
@@ -22,4 +23,18 @@ class CommentModel {
    required this.downVotes,
    required this.currentUser,
 });
+
+
+  factory CommentModel.fromJson(QueryDocumentSnapshot documentSnapshot){
+    return (CommentModel(
+      postID: documentSnapshot.get('postID'),
+      commentID: documentSnapshot.get('commentID'),
+      comment: documentSnapshot.get('comment'),
+      uploadedBy: documentSnapshot.get('uploadedBy'),
+      uploadedOn: documentSnapshot.get('uploadedOn'),
+      upVotes: documentSnapshot.get('upVotes'),
+      downVotes: documentSnapshot.get('downVotes'),
+      currentUser: documentSnapshot.get('currentUser'),
+    ));
+  }
 }

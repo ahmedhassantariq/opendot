@@ -28,8 +28,9 @@ class PostServices extends ChangeNotifier{
 
   Stream<List<PostModel>> getPostData() {
     Stream<QuerySnapshot> stream = _firestore.collection('posts').orderBy('uploadedOn', descending: true).snapshots();
-    Stream<List<PostModel>> model = stream.map((event) => event.docs.map((e) =>
-        PostModel(postType: e.get("postType"),postID: e.get("postID"), postTitle: e.get("postTitle"), uploadedBy: e.get("uploadedBy"), postDescription: e.get("postDescription"), uploadedOn: e.get("uploadedOn"), upVotes: e.get("upVotes"), imageUrl: e.get("imageUrl"), downVotes: e.get("downVotes"))).toList());
+
+    Stream<List<PostModel>> model = stream.map((event) => event.docs.map((e) => PostModel.fromJson(e)).toList());
+
     return model;
   }
 

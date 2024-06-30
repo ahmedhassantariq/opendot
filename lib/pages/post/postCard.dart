@@ -60,6 +60,7 @@ class _PostCardState extends State<PostCard> with AutomaticKeepAliveClientMixin{
 
         )));},
         child: Card(
+          key: widget.key,
           clipBehavior: Clip.antiAlias,
           color: Colors.white,
           child: Padding(

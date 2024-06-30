@@ -23,10 +23,7 @@ class PostFileIcon extends StatelessWidget {
 
 
   void download(String url, String title) async {
-    print(url);
-    print(title);
     String path = await _getFilePath(title);
-    print(path);
     var status = await Permission.storage.request().then((value) async {
       if (value.isGranted) {
         try{
@@ -84,10 +81,16 @@ class PostFileIcon extends StatelessWidget {
       final model  = PostFileModel.fromJson(url);
       final type = Constants().checkType(model.extension);
     if(type=='image'){
-      return Center(child: PostImagePreview(url: model.url));
+      return Container(
+        alignment: Alignment.center,
+        decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(8.0)),
+          child: PostImagePreview(url: model.url));
     }
     if(type=='video'){
-      return Center(child: VideoViewer(url: model.url));
+      return Container(
+          alignment: Alignment.center,
+          decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(8.0)),
+          child: VideoViewer(url: model.url));
     }
     if(type=='file'){
       return Center(

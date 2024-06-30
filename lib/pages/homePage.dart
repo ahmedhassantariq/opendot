@@ -26,7 +26,13 @@ class _HomePageState extends State<HomePage> {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int currentIndex = 0;
+
   onTapped(int index){
+    if(currentIndex==0&&index==0){
+      setState(() {
+
+      });
+    }
     setState(() {
       if(index==2){
         showPostMenu();

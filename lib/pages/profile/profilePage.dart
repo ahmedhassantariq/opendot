@@ -144,6 +144,7 @@ class _ProfilePageState extends State<ProfilePage>{
 
                                     )));},
                               child: PostCard(
+                                key: ValueKey(postModel),
                                 postModel: postModel,
                                 isProfile: true,)
                             )
