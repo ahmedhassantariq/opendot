@@ -42,6 +42,7 @@ class _PostCardState extends State<PostCard> with AutomaticKeepAliveClientMixin{
   final PostServices _postServices = PostServices();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -54,7 +55,6 @@ class _PostCardState extends State<PostCard> with AutomaticKeepAliveClientMixin{
           return const Center(child: Text(""));
         }
       return GestureDetector(
-        onLongPress: (){showPostPopUpMenu();},
         onTap: (){
           Navigator.push(context, MaterialPageRoute(
             builder: (context)=> PostView(

@@ -16,7 +16,6 @@ class VideoViewer extends StatefulWidget {
 
 class _VideoViewerState extends State<VideoViewer> {
   late VideoPlayerController _controller;
-  late VideoProgressIndicator videoProgressIndicator;
 
   @override
   void initState() {
@@ -29,18 +28,11 @@ class _VideoViewerState extends State<VideoViewer> {
       ..initialize().then((_) {
         setState(() {
           _controller.setLooping(true);
+          _controller.setVolume(0);
           _controller.addListener(() {setState(() {});});
         });
       });
-    videoProgressIndicator = VideoProgressIndicator(
-      _controller,
-      allowScrubbing: true,
-      colors: const VideoProgressColors(
-        backgroundColor: Colors.black,
-        bufferedColor: Colors.grey,
-        playedColor: Colors.red,
-      ),
-    );
+
   }
 
   @override
@@ -54,7 +46,6 @@ class _VideoViewerState extends State<VideoViewer> {
   @override
   Widget build(BuildContext context) {
     return VisibilityDetector(
-
       key: ObjectKey(_controller),
       onVisibilityChanged: (info) {
         if (info.visibleFraction < 5 && mounted) {
@@ -85,7 +76,6 @@ class _VideoViewerState extends State<VideoViewer> {
               )
                   : Container(),
               ControlsOverlay(controller: _controller),
-              videoProgressIndicator
             ],
           )
       ),

@@ -86,91 +86,88 @@ class _PostViewState extends State<PostView> {
               if(snapshot.connectionState == ConnectionState.waiting){
                 return const SingleShimmer();
               }
-              return GestureDetector(
-                onLongPress: (){showPostPopUpMenu();},
-                child: Column(
-                  children: [
-                    Flexible(
-                      child: Container(
-                        color: Colors.white,
-                        child: ListView(
-                            shrinkWrap: true,
-                            scrollDirection: Axis.vertical,
-                            children: [
-                              Container(
-                                color: Colors.white,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      GestureDetector(
-                                        onTap: (){showUserProfile();},
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Row(
-                                                children: [
-                                                  CircleAvatar(
-                                                      backgroundImage: NetworkImage(snapshot.data!.imageUrl),
-                                                      foregroundColor: Colors.blue,
-                                                      backgroundColor: Colors.transparent,
-                                                      radius: 15
-                                                  ),
-                                                  const SizedBox(width: 8.0),
-                                                  Text(snapshot.data!.userName, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
-                                                  const SizedBox(width: 8.0),
-                                                  Text((Constants().toTime(widget.postModel.uploadedOn)), style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 12),),
-                                                ]),
-                                            IconButton(
-                                                onPressed: () {showPostPopUpMenu();  },
-                                                icon: const Icon(Icons.more_horiz, color: Colors.grey,))
+              return Column(
+                children: [
+                  Flexible(
+                    child: Container(
+                      color: Colors.white,
+                      child: ListView(
+                          shrinkWrap: true,
+                          scrollDirection: Axis.vertical,
+                          children: [
+                            Container(
+                              color: Colors.white,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: (){showUserProfile();},
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Row(
+                                              children: [
+                                                CircleAvatar(
+                                                    backgroundImage: NetworkImage(snapshot.data!.imageUrl),
+                                                    foregroundColor: Colors.blue,
+                                                    backgroundColor: Colors.transparent,
+                                                    radius: 15
+                                                ),
+                                                const SizedBox(width: 8.0),
+                                                Text(snapshot.data!.userName, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
+                                                const SizedBox(width: 8.0),
+                                                Text((Constants().toTime(widget.postModel.uploadedOn)), style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 12),),
+                                              ]),
+                                          IconButton(
+                                              onPressed: () {showPostPopUpMenu();  },
+                                              icon: const Icon(Icons.more_horiz, color: Colors.grey,))
 
-                                          ],
-                                        ),
+                                        ],
                                       ),
-                                    ],),
-                                ),
+                                    ),
+                                  ],),
                               ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                child: Text(widget.postModel.postTitle.toString(), style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 18, letterSpacing: 0.5),),
-                              ),
-                              const SizedBox(height: 8.0),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: Text(widget.postModel.postTitle.toString(), style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 18, letterSpacing: 0.5),),
+                            ),
+                            const SizedBox(height: 8.0),
 
-                              PostViewList(imageUrl: widget.postModel.imageUrl),
+                            PostViewList(imageUrl: widget.postModel.imageUrl),
 
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 8.0),
-                                child: Text(widget.postModel.postDescription.toString()),
-                              ),
-                              const SizedBox(height: 8.0),
-                              StreamBuilder<List<CommentModel>>(
-                                stream: _postServices.getCommentData(widget.postModel.postID),
-                                builder: (context, snapshot) {
-                                  if (snapshot.hasData) {
-                                    return ListView.builder(
-                                      shrinkWrap: true,
-                                      physics: const ScrollPhysics(),
-                                      scrollDirection: Axis.vertical,
-                                      itemCount: snapshot.data!.length,
-                                      itemBuilder: (BuildContext context, int index) {
-                                        return CommentCard(commentModel: snapshot.data![index],);
-                                      },
-                                    );
-                                  }
-                                  if (snapshot.hasError) {
-                                    return const Align(alignment: Alignment.center, child: Text('Error Loading Comment'));
-                                  } else {
-                                    return const SizedBox(height: 0);
-                                  }
-                                },
-                              ),
-                            ]),
-                      ),
-                    )
-                  ],
-                ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 8.0),
+                              child: Text(widget.postModel.postDescription.toString()),
+                            ),
+                            const SizedBox(height: 8.0),
+                            StreamBuilder<List<CommentModel>>(
+                              stream: _postServices.getCommentData(widget.postModel.postID),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  return ListView.builder(
+                                    shrinkWrap: true,
+                                    physics: const ScrollPhysics(),
+                                    scrollDirection: Axis.vertical,
+                                    itemCount: snapshot.data!.length,
+                                    itemBuilder: (BuildContext context, int index) {
+                                      return CommentCard(commentModel: snapshot.data![index],);
+                                    },
+                                  );
+                                }
+                                if (snapshot.hasError) {
+                                  return const Align(alignment: Alignment.center, child: Text('Error Loading Comment'));
+                                } else {
+                                  return const SizedBox(height: 0);
+                                }
+                              },
+                            ),
+                          ]),
+                    ),
+                  )
+                ],
               );
             }),
       ),

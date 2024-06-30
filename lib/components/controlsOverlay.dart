@@ -10,6 +10,7 @@ class ControlsOverlay extends StatelessWidget {
     required this.controller
   });
 
+  late VideoProgressIndicator videoProgressIndicator;
   static const List<Duration> _exampleCaptionOffsets = <Duration>[
     Duration(seconds: -10),
     Duration(seconds: -3),
@@ -43,63 +44,75 @@ class ControlsOverlay extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: <Widget>[
-        AnimatedSwitcher(
-          duration: const Duration(milliseconds: 50),
-          reverseDuration: const Duration(milliseconds: 200),
-          child: controller.value.isPlaying
-              ? const SizedBox.shrink()
-              : const ColoredBox(
-            color: Colors.black26,
-            child: Center(
-              child: Icon(
-                Icons.play_arrow,
-                color: Colors.white,
-                size: 100.0,
-                semanticLabel: 'Play',
+        Row(
+          children: [
+            Align(
+              alignment: Alignment.bottomLeft,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  // Using less vertical padding as the text is also longer
+                  // horizontally, so it feels like it would need more spacing
+                  // horizontally (matching the aspect ratio of the video).
+                  vertical: 6,
+                  horizontal: 4,
+                ),
+                child: GestureDetector(
+                  onTap: (){controller.value.isPlaying ? controller.pause() : controller.play();},
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 50),
+                    reverseDuration: const Duration(milliseconds: 200),
+                    child: controller.value.isPlaying ?
+                    const Icon(Icons.pause,color: Colors.white,)
+                        : const Icon(Icons.play_arrow,color: Colors.white,),
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
-        GestureDetector(
-          onTap: () {
-            controller.value.isPlaying ? controller.pause() : controller.play();
-          },
-        ),
-        Align(
-          alignment: Alignment.bottomLeft,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              // Using less vertical padding as the text is also longer
-              // horizontally, so it feels like it would need more spacing
-              // horizontally (matching the aspect ratio of the video).
-              vertical: 12,
-              horizontal: 16,
-            ),
-            child: GestureDetector(
-              onTap: (){controller.value.volume==1?controller.setVolume(0):controller.setVolume(1);},
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 50),
-                reverseDuration: const Duration(milliseconds: 200),
-                child: controller.value.volume==1 ?
-                     const Icon(Icons.volume_up,color: Colors.white,)
-                    : const Icon(Icons.volume_off,color: Colors.white,),
+            Align(
+              alignment: Alignment.bottomLeft,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  // Using less vertical padding as the text is also longer
+                  // horizontally, so it feels like it would need more spacing
+                  // horizontally (matching the aspect ratio of the video).
+                  vertical: 6,
+                  horizontal: 4,
+                ),
+                child: GestureDetector(
+                  onTap: (){controller.value.volume==1?controller.setVolume(0):controller.setVolume(1);},
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 50),
+                    reverseDuration: const Duration(milliseconds: 200),
+                    child: controller.value.volume==1 ?
+                         const Icon(Icons.volume_up,color: Colors.white,)
+                        : const Icon(Icons.volume_off,color: Colors.white,),
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              // Using less vertical padding as the text is also longer
-              // horizontally, so it feels like it would need more spacing
-              // horizontally (matching the aspect ratio of the video).
-              vertical: 12,
-              horizontal: 16,
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 9,
+                  horizontal: 4,
+                ),
+                child: Text(_printDuration(controller.value.position), style: const TextStyle(color: Colors.white),),
+              ),
             ),
-            child: Text(_printDuration(controller.value.position), style: const TextStyle(color: Colors.white),),
-          ),
+          ],
         ),
+
+        Align(alignment: Alignment.bottomCenter,
+          child: videoProgressIndicator = VideoProgressIndicator(
+            controller,
+            allowScrubbing: true,
+            colors: const VideoProgressColors(
+              backgroundColor: Colors.black,
+              bufferedColor: Colors.grey,
+              playedColor: Colors.red,
+            ),
+          )),
         Align(
           alignment: Alignment.bottomRight,
           child: PopupMenuButton<double>(
