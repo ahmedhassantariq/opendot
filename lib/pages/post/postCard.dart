@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
@@ -16,6 +17,7 @@ import 'package:reddit_app/models/postModel.dart';
 import 'package:reddit_app/components/postViewList.dart';
 import 'package:reddit_app/pages/post/postUpdatePage.dart';
 import 'package:reddit_app/pages/post/postView.dart';
+import 'package:reddit_app/pages/post/sharePostPage.dart';
 import 'package:reddit_app/pages/profile/bottomProfileModal.dart';
 import 'package:reddit_app/services/posts/post_services.dart';
 import '../../components/postActions.dart';
@@ -93,7 +95,10 @@ class _PostCardState extends State<PostCard> with AutomaticKeepAliveClientMixin{
                         Text((Constants().toTime(widget.postModel.uploadedOn)), style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 12),),
 
                       ],
-                    ): const SizedBox()
+                    ): const SizedBox(),
+                    IconButton(
+                        onPressed: () {showPostPopUpMenu();  },
+                        icon: const Icon(Icons.more_horiz, color: Colors.grey,))
                   ],
                 ),
               ),
@@ -137,32 +142,49 @@ class _PostCardState extends State<PostCard> with AutomaticKeepAliveClientMixin{
                 child: ListView(
                   children: [
                     widget.postModel.uploadedBy==_firebaseAuth.currentUser!.uid ?
-                    TextButton.icon(
-                      style: TextButton.styleFrom(alignment: Alignment.centerLeft,padding: const EdgeInsets.symmetric(vertical: 15.0)),
-                      icon: const Icon(Icons.delete_outline, color: Colors.black,),
-                      onPressed: (){
-                        _postServices.deletePost(widget.postModel.postID, widget.postModel.uploadedBy);
-                        Provider.of<PostServices>(context, listen: false).notifyListeners();
-                        Navigator.pop(context);
-                      },
-                      label: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.9),
-                        child: const Text("Delete Post", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600)),
+                        Column(
+                          children: [
+                          TextButton.icon(
+                            style: TextButton.styleFrom(alignment: Alignment.centerLeft,padding: const EdgeInsets.symmetric(vertical: 15.0)),
+                            icon: const Icon(Icons.delete_outline, color: Colors.black,),
+                            onPressed: (){
+                              _postServices.deletePost(widget.postModel.postID, widget.postModel.uploadedBy);
+                              Provider.of<PostServices>(context, listen: false).notifyListeners();
+                              Navigator.pop(context);
+                            },
+                            label: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8.9),
+                              child: const Text("Delete Post", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600)),
+                            ),
+                          ),
+                          TextButton.icon(
+                            style: TextButton.styleFrom(alignment: Alignment.centerLeft,padding: const EdgeInsets.symmetric(vertical: 15.0)),
+                            icon: const Icon(Icons.update_outlined, color: Colors.black,),
+                            onPressed: (){
+                              Navigator.pop(context);
+                              showPostUpdateMenu();
+                            },
+                            label: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8.9),
+                              child: const Text("Update Post", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600)),
+                            ),
+                          )
+                        ],) : const SizedBox(height: 0,width: 0),
+                    Align(
+                      alignment: Alignment.center,
+                      child: TextButton.icon(
+                        style: TextButton.styleFrom(alignment: Alignment.centerLeft,padding: const EdgeInsets.symmetric(vertical: 15.0)),
+                        icon: const Icon(Icons.share, color: Colors.black,),
+                        onPressed: (){
+                          Navigator.pop(context);
+                          showSharePostMenu();
+                        },
+                        label: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.9),
+                          child: const Text("Share Post", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600)),
+                        ),
                       ),
-                    ) : const SizedBox(height: 0,width: 0),
-                    widget.postModel.uploadedBy==_firebaseAuth.currentUser!.uid ?
-                    TextButton.icon(
-                      style: TextButton.styleFrom(alignment: Alignment.centerLeft,padding: const EdgeInsets.symmetric(vertical: 15.0)),
-                      icon: const Icon(Icons.update_outlined, color: Colors.black,),
-                      onPressed: (){
-                        Navigator.pop(context);
-                        showPostUpdateMenu();
-                      },
-                      label: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.9),
-                        child: const Text("Update Post", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600)),
-                      ),
-                    ) : const SizedBox(height: 0,width: 0),
+                    )
                   ],
                 )
               ),
@@ -202,6 +224,18 @@ class _PostCardState extends State<PostCard> with AutomaticKeepAliveClientMixin{
         });
   }
 
+  showSharePostMenu() {
+    showModalBottomSheet(
+        isScrollControlled: true,
+        enableDrag: false,
+        context: context,
+        builder: (BuildContext context) {
+          return SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              physics: const ScrollPhysics(),
+              child: SharePost(postModel: widget.postModel));
+        });
+  }
   @override
   // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;

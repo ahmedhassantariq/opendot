@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:reddit_app/models/postModel.dart';
 import 'package:reddit_app/pages/post/postCard.dart';
 import 'package:reddit_app/services/posts/post_services.dart';
@@ -33,7 +34,6 @@ class _ScrollViewPageState extends State<ScrollViewPage> {
   }
   @override
   void initState() {
-    streamController.addStream(_postServices.getPostData());
     super.initState();
   }
 
@@ -45,7 +45,11 @@ class _ScrollViewPageState extends State<ScrollViewPage> {
         future: getStream(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(
+                child: LoadingAnimationWidget.beat(
+                  color: const Color(0xFF000000),
+                  size: 50,
+                ));
           }
           final items = snapshot.data!;
           return ListView.builder(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit_app/models/commentModel.dart';
 import 'package:reddit_app/services/posts/post_services.dart';
+import '../../../components/CONSTANTS.dart';
 import '../../profile/bottomProfileModal.dart';
 
 class CommentCard extends StatefulWidget {
@@ -27,12 +28,12 @@ class _CommentCardState extends State<CommentCard> {
           return const Text("Error Loading Comment");
         }
         if(snapshot.connectionState == ConnectionState.waiting){
-          return SizedBox(height: 0,);
+          return const SizedBox(height: 0);
         }
         return Container(
           color: Colors.grey[200],
           child: Container(
-            margin: const EdgeInsets.symmetric(vertical: 5),
+            margin: const EdgeInsets.symmetric(vertical: 2),
             color: Colors.white,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -50,7 +51,8 @@ class _CommentCardState extends State<CommentCard> {
                           CircleAvatar(
                               backgroundImage: NetworkImage(snapshot.data!.imageUrl),
                               backgroundColor: Colors.transparent,
-                              radius: 15),
+                              radius: 15
+                          ),
                           const SizedBox(width: 8.0),
                           Text(
                             snapshot.data!.userName,
@@ -59,7 +61,7 @@ class _CommentCardState extends State<CommentCard> {
                           ),
                           const SizedBox(width: 8.0),
                           Text(
-                            ("${DateTime.now().difference(widget.commentModel.uploadedOn.toDate()).inHours}h"),
+                            (Constants().toTime(widget.commentModel.uploadedOn)),
                             style: const TextStyle(
                                 fontWeight: FontWeight.w300, fontSize: 12),
                           ),
@@ -69,7 +71,7 @@ class _CommentCardState extends State<CommentCard> {
                               showCommentPopUpMenu();
                             },
                             icon: const Icon(
-                              Icons.menu_outlined,
+                              Icons.more_horiz_outlined,
                               color: Colors.grey,
                             ))
                       ],

@@ -52,6 +52,12 @@ class _PostViewState extends State<PostView> {
     });
   }
 
+  Future<void> refreshPost() async{
+    setState(() {
+
+    });
+  }
+
   @override
   void dispose() {
     // TODO: implement dispose
@@ -69,102 +75,105 @@ class _PostViewState extends State<PostView> {
         title: _isSearching ? _buildSearchField() : _buildTitle(context),
         actions: _buildActions(),
       ),
-      body: FutureBuilder(
-          future: _postServices.getUser(widget.postModel.uploadedBy) ,
-          builder: (builder, snapshot){
-            if(snapshot.hasError){
-              return const Text("Could not load Post");
-            }
-            if(snapshot.connectionState == ConnectionState.waiting){
-              return const SingleShimmer();
-            }
-            return Column(
-              children: [
-                Flexible(
-                  child: Container(
-                    color: Colors.white,
-                    child: ListView(
-                        shrinkWrap: true,
-                        scrollDirection: Axis.vertical,
-                        children: [
-                          Container(
-                            color: Colors.white,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  GestureDetector(
-                                    onTap: (){showUserProfile();},
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Row(
-                                            children: [
-                                              CircleAvatar(
-                                                  backgroundImage: NetworkImage(snapshot.data!.imageUrl),
-                                                  foregroundColor: Colors.blue,
-                                                  backgroundColor: Colors.transparent,
-                                                  radius: 15
-                                              ),
-                                              const SizedBox(width: 8.0),
-                                              Text(snapshot.data!.userName, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
-                                              const SizedBox(width: 8.0),
-                                              Text((Constants().toTime(widget.postModel.uploadedOn)), style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 12),),
-                                            ]),
-                                        GestureDetector(
-                                            onTap: (){showPostPopUpMenu();},
-                                            child: const Icon(Icons.menu_outlined, color: Colors.grey,))
+      body: RefreshIndicator(
+        onRefresh: refreshPost,
+        child: FutureBuilder(
+            future: _postServices.getUser(widget.postModel.uploadedBy) ,
+            builder: (builder, snapshot){
+              if(snapshot.hasError){
+                return const Icon(Icons.error);
+              }
+              if(snapshot.connectionState == ConnectionState.waiting){
+                return const SingleShimmer();
+              }
+              return GestureDetector(
+                onLongPress: (){showPostPopUpMenu();},
+                child: Column(
+                  children: [
+                    Flexible(
+                      child: Container(
+                        color: Colors.white,
+                        child: ListView(
+                            shrinkWrap: true,
+                            scrollDirection: Axis.vertical,
+                            children: [
+                              Container(
+                                color: Colors.white,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      GestureDetector(
+                                        onTap: (){showUserProfile();},
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Row(
+                                                children: [
+                                                  CircleAvatar(
+                                                      backgroundImage: NetworkImage(snapshot.data!.imageUrl),
+                                                      foregroundColor: Colors.blue,
+                                                      backgroundColor: Colors.transparent,
+                                                      radius: 15
+                                                  ),
+                                                  const SizedBox(width: 8.0),
+                                                  Text(snapshot.data!.userName, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
+                                                  const SizedBox(width: 8.0),
+                                                  Text((Constants().toTime(widget.postModel.uploadedOn)), style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 12),),
+                                                ]),
+                                            IconButton(
+                                                onPressed: () {showPostPopUpMenu();  },
+                                                icon: const Icon(Icons.more_horiz, color: Colors.grey,))
 
-                                      ],
-                                    ),
-                                  ),
-                                ],),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: Text(widget.postModel.postTitle.toString(), style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 18, letterSpacing: 0.5),),
-                          ),
-                          const SizedBox(height: 8.0),
+                                          ],
+                                        ),
+                                      ),
+                                    ],),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                child: Text(widget.postModel.postTitle.toString(), style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 18, letterSpacing: 0.5),),
+                              ),
+                              const SizedBox(height: 8.0),
 
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: PostViewList(imageUrl: widget.postModel.imageUrl),
-                          ),
+                              PostViewList(imageUrl: widget.postModel.imageUrl),
 
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 8.0),
-                            child: Text(widget.postModel.postDescription.toString()),
-                          ),
-                          const SizedBox(height: 8.0),
-                          StreamBuilder<List<CommentModel>>(
-                            stream: _postServices.getCommentData(widget.postModel.postID),
-                            builder: (context, snapshot) {
-                              if (snapshot.hasData) {
-                                return ListView.builder(
-                                  shrinkWrap: true,
-                                  physics: const ScrollPhysics(),
-                                  scrollDirection: Axis.vertical,
-                                  itemCount: snapshot.data!.length,
-                                  itemBuilder: (BuildContext context, int index) {
-                                    return CommentCard(commentModel: snapshot.data![index],);
-                                  },
-                                );
-                              }
-                              if (snapshot.hasError) {
-                                return const Align(alignment: Alignment.center, child: Text('Error Loading Comment'));
-                              } else {
-                                return const SizedBox(height: 0);
-                              }
-                            },
-                          ),
-                        ]),
-                  ),
-                )
-              ],
-            );
-          }),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 8.0,vertical: 8.0),
+                                child: Text(widget.postModel.postDescription.toString()),
+                              ),
+                              const SizedBox(height: 8.0),
+                              StreamBuilder<List<CommentModel>>(
+                                stream: _postServices.getCommentData(widget.postModel.postID),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    return ListView.builder(
+                                      shrinkWrap: true,
+                                      physics: const ScrollPhysics(),
+                                      scrollDirection: Axis.vertical,
+                                      itemCount: snapshot.data!.length,
+                                      itemBuilder: (BuildContext context, int index) {
+                                        return CommentCard(commentModel: snapshot.data![index],);
+                                      },
+                                    );
+                                  }
+                                  if (snapshot.hasError) {
+                                    return const Align(alignment: Alignment.center, child: Text('Error Loading Comment'));
+                                  } else {
+                                    return const SizedBox(height: 0);
+                                  }
+                                },
+                              ),
+                            ]),
+                      ),
+                    )
+                  ],
+                ),
+              );
+            }),
+      ),
       bottomNavigationBar: BottomAppBar(
         padding: const EdgeInsets.all(8.0),
         color: Colors.white,
@@ -266,38 +275,54 @@ class _PostViewState extends State<PostView> {
               Expanded(
                   child: ListView(
                     children: [
-                      widget.postModel.uploadedBy== _firebaseAuth.currentUser!.uid ?
-                      TextButton.icon(
-                        style: TextButton.styleFrom(alignment: Alignment.centerLeft,padding: const EdgeInsets.symmetric(vertical: 15.0)),
-                        icon: const Icon(Icons.delete_outline, color: Colors.black,),
-                        onPressed: (){
-                          _postServices.deletePost(widget.postModel.postID, widget.postModel.uploadedBy).then((value)
-                          {
-                          Provider.of<PostServices>(context, listen: false).notifyListeners();
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                          });
-
-                        },
-                        label: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.9),
-                          child: const Text("Delete Post", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600)),
-                        ),
-                      ) : const SizedBox(height: 0,width: 0),
                       widget.postModel.uploadedBy==_firebaseAuth.currentUser!.uid ?
-                      TextButton.icon(
-                        style: TextButton.styleFrom(alignment: Alignment.centerLeft,padding: const EdgeInsets.symmetric(vertical: 15.0)),
-                        icon: const Icon(Icons.update_outlined, color: Colors.black,),
-                        onPressed: (){
-                          Navigator.pop(context);
-                          showPostUpdateMenu();
-                        },
-                        label: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.9),
-                          child: const Text("Update Post", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600)),
-                        ),
-                      ) : const SizedBox(height: 0,width: 0),
+                          Column(
+                            children: [
+                            TextButton.icon(
+                              style: TextButton.styleFrom(alignment: Alignment.centerLeft,padding: const EdgeInsets.symmetric(vertical: 15.0)),
+                              icon: const Icon(Icons.delete_outline, color: Colors.black,),
+                              onPressed: (){
+                                _postServices.deletePost(widget.postModel.postID, widget.postModel.uploadedBy).then((value)
+                                {
+                                  Provider.of<PostServices>(context, listen: false).notifyListeners();
+                                  Navigator.pop(context);
+                                  Navigator.pop(context);
+                                });
 
+                              },
+                              label: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8.9),
+                                child: const Text("Delete Post", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600)),
+                              ),
+                            ),
+                            TextButton.icon(
+                              style: TextButton.styleFrom(alignment: Alignment.centerLeft,padding: const EdgeInsets.symmetric(vertical: 15.0)),
+                              icon: const Icon(Icons.update_outlined, color: Colors.black,),
+                              onPressed: (){
+                                Navigator.pop(context);
+                                showPostUpdateMenu();
+                              },
+                              label: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8.9),
+                                child: const Text("Update Post", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600)),
+                              ),
+                            ),
+                          ]) : const SizedBox(height: 0,width: 0),
+                      Align(
+                        alignment: Alignment.center,
+                        child: TextButton.icon(
+                          style: TextButton.styleFrom(alignment: Alignment.centerLeft,padding: const EdgeInsets.symmetric(vertical: 15.0)),
+                          icon: const Icon(Icons.share, color: Colors.black,),
+                          onPressed: (){
+                            Navigator.pop(context);
+                            showSharePostMenu();
+                          },
+                          label: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8.9),
+                            child: const Text("Share Post", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600)),
+                          ),
+                        ),
+                      )
                     ],
                   )
               ),
@@ -370,7 +395,7 @@ class _PostViewState extends State<PostView> {
     }
     return <Widget>[
       // IconButton(icon: const Icon(Icons.search), onPressed: _startSearch,),
-      IconButton(onPressed: (){showSharePostMenu();}, icon: const Icon(CupertinoIcons.share)),
+      // IconButton(onPressed: (){showSharePostMenu();}, icon: const Icon(CupertinoIcons.share)),
 
 
     ];
