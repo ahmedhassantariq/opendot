@@ -16,6 +16,7 @@ class _EndDrawerState extends State<EndDrawer> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
+      surfaceTintColor: Colors.white,
       backgroundColor: Colors.white,
       child: ListView(
         children: [
@@ -23,7 +24,7 @@ class _EndDrawerState extends State<EndDrawer> {
               future: PostServices().getUser(_firebaseAuth.currentUser!.uid),
               builder: (builder, snapshot){
                 if(snapshot.hasError) {
-                  return const Text("Error Loading");
+                  return const Icon(Icons.error);
                 }
                 if(snapshot.connectionState == ConnectionState.waiting) {
                   return const SizedBox();

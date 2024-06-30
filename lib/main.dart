@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit_app/services/auth/auth_gate.dart';
@@ -33,17 +34,24 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     return MultiProvider(
         providers: [
           ChangeNotifierProvider<FirebaseServices>(create: (context)=>FirebaseServices()),
           ChangeNotifierProvider<PostServices>(create: (context)=>PostServices()),
           ChangeNotifierProvider<ChatServices>(create: (context)=>ChatServices()),
     ],
-      child: MaterialApp(
-      debugShowCheckedModeBanner: false,
-      scrollBehavior: const ScrollBehavior().copyWith(scrollbars: false),
-      title: 'Open Dot',
-      home: const AuthGate(),
-    ));
+      child: FractionallySizedBox(
+        widthFactor: kIsWeb ? (screenWidth < 500 ? 1.0 : 500 / screenWidth) : 1.0,
+        child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+
+        scrollBehavior: const ScrollBehavior().copyWith(scrollbars: false),
+        title: 'Open Dot',
+        home: const AuthGate()
+
+        )
+            )
+      );
   }
 }

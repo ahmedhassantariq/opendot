@@ -22,6 +22,7 @@ class _VideoViewerState extends State<VideoViewer> {
   void initState() {
     // TODO: implement initState
     super.initState();
+
     _controller = VideoPlayerController.networkUrl(
         Uri.parse(
             widget.url))

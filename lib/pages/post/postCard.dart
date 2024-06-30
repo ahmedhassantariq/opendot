@@ -65,6 +65,7 @@ class _PostCardState extends State<PostCard> with AutomaticKeepAliveClientMixin{
           key: widget.key,
           clipBehavior: Clip.antiAlias,
           color: Colors.white,
+          surfaceTintColor: Colors.white,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
@@ -192,7 +193,6 @@ class _PostCardState extends State<PostCard> with AutomaticKeepAliveClientMixin{
           );
         });
   }
-
 
   showPostUpdateMenu() {
     showModalBottomSheet(

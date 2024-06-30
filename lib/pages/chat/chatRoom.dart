@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -29,15 +31,22 @@ class _ChatRoomState extends State<ChatRoom> {
   final FocusNode focusNode = FocusNode();
   final NotificationServices notificationServices = NotificationServices();
 
+  final StreamController<QuerySnapshot<Object?>> streamController = StreamController();
+  late StreamSubscription subscription;
+  bool isAtBottom = false;
   @override
   void initState() {
+    final StreamView streamView = StreamView(_chatServices.getChatRoomMessages(widget.receiver.uid));
+    streamView.listen((value) {
+      _scrollDown();
+      },onDone: (){_scrollDown();});
+    streamController.addStream(_chatServices.getChatRoomMessages(widget.receiver.uid));
     super.initState();
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      Future.delayed(const Duration(seconds: 1), () {
-        if(_controller.hasClients){
-          _scrollDown();
-        }}
-    );});
+    _controller.addListener(() {
+      if(_controller.offset<_controller.position.maxScrollExtent){
+        isAtBottom = true;
+      }
+    });
   }
 
   submitMessage(){
@@ -61,6 +70,11 @@ class _ChatRoomState extends State<ChatRoom> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: !isAtBottom ? Padding(
+        padding: const EdgeInsets.only(bottom: 50.0),
+        child: IconButton(onPressed: (){_scrollDown();},icon: const Icon(Icons.arrow_drop_down, color: Colors.black,),),
+      ):const SizedBox(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       appBar: AppBar(
         leading: IconButton(icon:const Icon(Icons.arrow_back, color: Colors.black,), onPressed: () {Navigator.pop(context);},),
         title: Row(
@@ -103,7 +117,7 @@ class _ChatRoomState extends State<ChatRoom> {
 
   Widget _buildMessageList(){
     return StreamBuilder(
-        stream: _chatServices.getChatRoomMessages(widget.receiver.uid),
+        stream: streamController.stream,
         builder: (context, snapshots) {
       if(snapshots.hasError) {
         return const Text("Has Error");
@@ -112,13 +126,14 @@ class _ChatRoomState extends State<ChatRoom> {
         return const Text("Loading");
       }
       return ListView(
+        key: const ValueKey("list_view"),
         controller: _controller,
-        children: snapshots.data!.docs.map((document) => _buildMessageItem(document)).toList(),
+        children: snapshots.data!.docs.map((document) => _buildMessageItem(context, document)).toList(),
       );
         });
   }
 
-  Widget _buildMessageItem(DocumentSnapshot document){
+  Widget _buildMessageItem(BuildContext context, DocumentSnapshot document){
     Map<String, dynamic> data = document.data() as Map<String, dynamic>;
     var alignment = (data['senderID'] == FirebaseAuth.instance.currentUser!.uid)
     ?
@@ -173,6 +188,7 @@ class _ChatRoomState extends State<ChatRoom> {
                     const SnackBar(content: Text("Cannot Edit Message")));
               },
             child: Container(
+              key: ValueKey(document.id),
                 padding: const EdgeInsets.all(4.0),
                 decoration: BoxDecoration(
                     color: color,

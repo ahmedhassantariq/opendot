@@ -39,6 +39,7 @@ class _FrontDrawerState extends State<FrontDrawer> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
+      surfaceTintColor: Colors.white,
       child: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
       children: [
