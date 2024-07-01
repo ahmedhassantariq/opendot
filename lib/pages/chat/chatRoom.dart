@@ -3,11 +3,11 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:intl/intl.dart';
 import 'package:reddit_app/components/messageTextField.dart';
 import 'package:reddit_app/models/notificationsModel.dart';
 import 'package:reddit_app/models/userDataModel.dart';
+import 'package:reddit_app/pages/chat/videoCall/videoCallReceive.dart';
 import 'package:reddit_app/pages/chat/videoCall/videoCallSend.dart';
 import 'package:reddit_app/services/chat/chat_services.dart';
 import 'package:reddit_app/services/notifications/notification_services.dart';
@@ -51,17 +51,16 @@ class _ChatRoomState extends State<ChatRoom> {
 
   submitMessage(){
     if(_messageEditingController.text.isNotEmpty) {
-      notificationServices.sendNotification(
-          NotificationsModel(
-              to: widget.receiver.uid,
-              priority: 'high',
-              title: 'Message',
-              body: _messageEditingController.text,
-              type: 'chat',
-              id: '1',
-              payload: '0'
-          )
-      );
+      // notificationServices.sendNotification(NotificationsModel(
+      //         to: widget.receiver.uid,
+      //         priority: 'high',
+      //         title: 'Message',
+      //         body: _messageEditingController.text,
+      //         type: 'chat',
+      //         id: '1',
+      //         payload: '0'
+      //     ));
+
       _chatServices.sendMessage(widget.receiver.uid, _messageEditingController.text, 'text').then((value) => _scrollDown());
       _messageEditingController.clear();
     }
@@ -148,7 +147,7 @@ class _ChatRoomState extends State<ChatRoom> {
     Timestamp timestamp = data['timestamp'];
     final time = DateFormat('hh:mm');
     final difference = DateTime.now().difference(timestamp.toDate());
-
+    print(data['message']);
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 3.0, horizontal: 12.0),
       margin: const EdgeInsets.symmetric(vertical: 8.0),
@@ -176,6 +175,9 @@ class _ChatRoomState extends State<ChatRoom> {
           )
               :
           GestureDetector(
+            onTap: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>VideoCallReceive(receiver: widget.receiver, roomId: data['message'], isVideo: true)));
+            },
               onLongPress: (){ (difference.inDays <= 1 && _firebaseAuth.currentUser!.uid == data['senderID']) ?
               showCommentDeletionMenu(data['messageID']) :
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Cannot Delete Message")));

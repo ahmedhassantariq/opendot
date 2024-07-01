@@ -108,7 +108,7 @@ class WebRtcManager {
     return roomId;
   }
 
-  Future<void> joinRoom(String roomId,RTCVideoRenderer localVideo, RTCVideoRenderer remoteVideo, bool isVideo) async {
+  Future<void> joinRoom(String roomId,RTCVideoRenderer localVideo, RTCVideoRenderer remoteVideo) async {
     await openUserMedia(localVideo, remoteVideo);
 
     FirebaseFirestore db = FirebaseFirestore.instance;
@@ -185,9 +185,9 @@ class WebRtcManager {
 
   Future<void> openUserMedia(RTCVideoRenderer localVideo, RTCVideoRenderer remoteVideo) async {
     var stream = await navigator.mediaDevices.getUserMedia({'video': true, 'audio': true});
-      localVideo.srcObject = stream;
-      localStream = stream;
-      remoteVideo.srcObject = await createLocalMediaStream('key');
+    localVideo.srcObject = stream;
+    localStream = stream;
+    remoteVideo.srcObject = await createLocalMediaStream('key');
   }
 
   Future<void> hangUp(RTCVideoRenderer localVideo) async {
@@ -232,10 +232,16 @@ class WebRtcManager {
     }
   }
 
-  void muteMic() {
+  void muteMic(bool isMic) {
     if (localStream != null) {
       bool enabled = localStream!.getAudioTracks()[0].enabled;
-      localStream!.getAudioTracks()[0].enabled = !enabled;
+      localStream!.getAudioTracks()[0].enabled = isMic;
+    }
+  }
+  void muteVideo(bool isVideo) {
+    if (localStream != null) {
+      bool enabled = localStream!.getAudioTracks()[0].enabled;
+      localStream!.getVideoTracks()[0].enabled = isVideo;
     }
   }
 

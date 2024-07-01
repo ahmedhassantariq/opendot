@@ -29,8 +29,10 @@ class AuthService extends ChangeNotifier {
 
   Future<UserCredential> signUpWithEmailAndPassword(String email, password) async {
     String fcmToken = "";
-
-    await NotificationServices().getDeviceToken().then((value) => fcmToken = value);
+    if(kIsWeb || defaultTargetPlatform==TargetPlatform.android){
+      await NotificationServices().getDeviceToken().then((value) =>
+      fcmToken = value);
+    }
     try{
       UserCredential userCredential = await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
       _firestore.collection('users').doc(userCredential.user!.uid).set({

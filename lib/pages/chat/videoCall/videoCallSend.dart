@@ -2,10 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
-import 'package:reddit_app/models/userDataModel.dart';
-import 'package:reddit_app/services/notifications/notification_services.dart';
+import 'package:reddit_app/services/chat/chat_services.dart';
 
-import '../../../models/notificationsModel.dart';
+import '../../../models/userDataModel.dart';
 import '../../../services/chat/signaling.dart';
 
 
@@ -23,27 +22,36 @@ class _VideoCallSendState extends State<VideoCallSend> {
   WebRtcManager signaling = WebRtcManager();
   RTCVideoRenderer _localRenderer = RTCVideoRenderer();
   final RTCVideoRenderer _remoteRenderer = RTCVideoRenderer();
+  final ChatServices _chatServices = ChatServices();
   String? roomId;
+  bool frontCamera = false;
+  bool isMic = true;
+  bool isVideo = true;
+  bool isLocalScreen = true;
 
-  sendMessage(String roomID) {
-    if(roomId!=null) {
-      NotificationServices().sendNotification(
-          NotificationsModel(
-              to: widget.receiver.uid,
-              priority: 'high',
-              title: 'Call',
-              body: "Calling",
-              type: 'call',
-              id: '1',
-              payload: roomID
-          )
-      );
-    }
-  }
+
+  // sendMessage(String roomID) {
+  //   if(roomId!=null) {
+  //     NotificationServices().sendNotification(
+  //         NotificationsModel(
+  //             to: widget.receiver.uid,
+  //             priority: 'high',
+  //             title: 'Call',
+  //             body: "Calling",
+  //             type: 'call',
+  //             id: '1',
+  //             payload: roomID
+  //         )
+  //     );
+  //   }
+  // }
 
   sendInvite() async{
-    roomId = await signaling.createRoom(_localRenderer,_remoteRenderer);
-    sendMessage(roomId!);
+    await signaling.createRoom(_localRenderer,_remoteRenderer).then((value) => {
+    _chatServices.sendMessage(widget.receiver.uid, value, 'text')
+    });
+    // sendMessage(roomId!);
+
     setState(() {
     });
   }
@@ -73,14 +81,25 @@ class _VideoCallSendState extends State<VideoCallSend> {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.white,
-          leading: IconButton(onPressed: (){Navigator.pop(context);signaling.hangUp(_localRenderer);}, icon: const Icon(Icons.arrow_back, color: Colors.black,)),
+          title: Text(widget.receiver.email.toString()),
+          backgroundColor: Colors.lightGreen,
+          leading: IconButton(onPressed: (){Navigator.pop(context);signaling.hangUp(_localRenderer);}, icon: const Icon(Icons.arrow_back, color: Colors.white,)),
           actions: [
-            defaultTargetPlatform == TargetPlatform.android
+            (defaultTargetPlatform == TargetPlatform.android)
                 ?
-            IconButton(onPressed: (){signaling?.switchCamera();}, icon: const Icon(Icons.switch_camera, color: Colors.black,))
+            IconButton(onPressed: (){signaling?.switchCamera(); setState(() {
+              frontCamera = !frontCamera;
+            });}, icon: const Icon(Icons.switch_camera, color: Colors.white,))
                 :
-            const SizedBox()
+            const SizedBox(),
+            IconButton(onPressed: (){isMic = !isMic; setState(() {
+              signaling?.muteMic(isMic);
+            });}, icon: isMic ? const Icon(Icons.mic, color: Colors.white,): const Icon(Icons.mic_off, color: Colors.red,)),
+            IconButton(onPressed: (){isVideo = !isVideo; setState(() {
+              signaling?.muteVideo(isVideo);
+            });}, icon: isVideo ? const Icon(Icons.videocam_outlined, color: Colors.white,): const Icon(Icons.videocam_off_outlined, color: Colors.red,)),
+            IconButton(onPressed: (){isLocalScreen = !isLocalScreen; setState(() {});}, icon: isLocalScreen ? const Icon(Icons.video_camera_front_outlined, color: Colors.white,): const Icon(Icons.videocam_off_outlined, color: Colors.red,)),
+
           ],
         ),
         bottomNavigationBar: BottomAppBar(
@@ -91,27 +110,26 @@ class _VideoCallSendState extends State<VideoCallSend> {
                 Navigator.pop(context);
               }, child: const Text("Hang Up", style: TextStyle(color: Colors.white),)),
         ),
-        body: Column(
-          children: <Widget>[
-            SizedBox(height: 8),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Expanded(
-                        child: RTCVideoView(
-                          _localRenderer,
-                          mirror:
-                          true,
-                        )),
-                    Expanded(
-                        child: RTCVideoView(_remoteRenderer)),
-                  ],
-                ),
+        body: Stack(
+          children:<Widget> [
+            Container(
+              child: RTCVideoView(
+                _remoteRenderer,
+                objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
               ),
             ),
+            isLocalScreen ? Positioned(
+              bottom: 0,
+              right: 0,
+              child: SizedBox(
+                  height: 200,
+                  width: 150,
+                  child: isVideo ?  RTCVideoView(
+                    _localRenderer,
+                    mirror: defaultTargetPlatform == TargetPlatform.android ? !frontCamera : true,
+                    objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
+                  ) : const Icon(Icons.videocam_off, color: Colors.white,)),
+            ) : const SizedBox(),
           ],
         ),
       ),
