@@ -49,7 +49,7 @@ class _ChatPageState extends State<ChatPage> {
       future: PostServices().getUser(document.id),
       builder: (context, snapshot) {
         if(snapshot.hasError){
-          return const Text("Error Loading Chat");
+          return const Center(child: Text("Error Loading Chat"));
         }
         if(snapshot.connectionState == ConnectionState.waiting){
           return const SizedBox(height: 0);

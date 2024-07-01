@@ -5,7 +5,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:reddit_app/components/messageTextField.dart';
-import 'package:reddit_app/models/notificationsModel.dart';
 import 'package:reddit_app/models/userDataModel.dart';
 import 'package:reddit_app/pages/chat/videoCall/videoCallReceive.dart';
 import 'package:reddit_app/pages/chat/videoCall/videoCallSend.dart';
