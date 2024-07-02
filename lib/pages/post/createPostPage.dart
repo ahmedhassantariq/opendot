@@ -1,18 +1,10 @@
-import 'dart:io';
-import 'dart:math';
 import 'dart:typed_data';
-
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
-import 'package:flutter_webrtc/flutter_webrtc.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:reddit_app/components/CONSTANTS.dart';
 import 'package:reddit_app/components/postFileIcon.dart';
 import 'package:reddit_app/models/postFileModel.dart';
 import 'package:reddit_app/services/posts/post_services.dart';
@@ -29,7 +21,6 @@ class _CreatePostPageState extends State<CreatePostPage> {
   final TextEditingController _postTextFieldTitleController = TextEditingController();
   final TextEditingController _postTextFieldBodyController = TextEditingController();
   late final PostServices _postServices = PostServices();
-  final ImagePicker picker = ImagePicker();
   late List<dynamic> imageUrl = [];
   double iconSize = 30;
   bool isUploading = false;
@@ -132,7 +123,6 @@ class _CreatePostPageState extends State<CreatePostPage> {
                 const SizedBox(width: 8.0,),
                 GestureDetector(
                     onTap: !isUploading ? () async {
-                      // final pickedImage = await picker.pickImage(source: ImageSource.gallery, imageQuality: 0);
                       FilePickerResult? pickedImage = await FilePicker.platform.pickFiles(
                         allowMultiple: true,
                         type: FileType.any,

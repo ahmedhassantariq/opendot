@@ -6,7 +6,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit_app/components/postFileIcon.dart';
 import 'package:reddit_app/models/postFileModel.dart';
@@ -32,7 +31,6 @@ class _UpdatePostPageState extends State<UpdatePostPage> {
   final TextEditingController _postTextFieldTitleController = TextEditingController();
   final TextEditingController _postTextFieldBodyController = TextEditingController();
   late final PostServices _postServices = PostServices();
-  final ImagePicker picker = ImagePicker();
   late List<dynamic> imageUrl = [];
   double iconSize = 30;
   bool isUploading = false;

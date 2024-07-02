@@ -1,9 +1,5 @@
-import 'dart:io';
-import 'dart:typed_data';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:reddit_app/components/myTextfield.dart';
 import 'package:reddit_app/models/userDataModel.dart';
 import 'package:reddit_app/services/auth/auth_service.dart';
@@ -25,7 +21,6 @@ class _UserSettingsState extends State<UserSettings> {
   final TextEditingController _displayNameController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _userNameController = TextEditingController();
-  final ImagePicker picker = ImagePicker();
   final PostServices _postServices = PostServices();
   bool isUploading = false;
 
@@ -66,19 +61,19 @@ class _UserSettingsState extends State<UserSettings> {
             children: [
               GestureDetector(
                 onTap: () async {
-                  final pickedImage = await picker.pickImage(source: ImageSource.gallery);
-                  if(pickedImage?.path!=null) {
-                    File file = File(pickedImage!.path);
-                    Image image = Image.memory(await pickedImage.readAsBytes());
-                    Uint8List img = await pickedImage.readAsBytes();
-                    setState(() {
-                      isUploading = true;
-                    });
-                    _postServices.uploadImage(pickedImage.name, img)
-                        .then((value){ _authService.updateDisplayPhoto(value);
-                    setState(() {});
-                        });
-                  }
+                  // final pickedImage = await picker.pickImage(source: ImageSource.gallery);
+                  // if(pickedImage?.path!=null) {
+                  //   File file = File(pickedImage!.path);
+                  //   Image image = Image.memory(await pickedImage.readAsBytes());
+                  //   Uint8List img = await pickedImage.readAsBytes();
+                  //   setState(() {
+                  //     isUploading = true;
+                  //   });
+                  //   _postServices.uploadImage(pickedImage.name, img)
+                  //       .then((value){ _authService.updateDisplayPhoto(value);
+                  //   setState(() {});
+                  //       });
+                  // }
                 },
                   child: CircleAvatar(backgroundImage: NetworkImage(snapshot.data!.imageUrl),minRadius: 50,)),
               const SizedBox(height: 8.0),
