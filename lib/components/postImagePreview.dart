@@ -7,8 +7,7 @@ class PostImagePreview extends StatefulWidget {
   final String _url;
   final double _width;
   final double _height;
-  const PostImagePreview(
-      {super.key, double width = 0, double height = 0, required String url}):
+  const PostImagePreview({super.key, double width = 0, double height = 0, required String url}):
         _url= url, _width = width, _height=height;
 
   @override

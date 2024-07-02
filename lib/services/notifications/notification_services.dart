@@ -193,21 +193,21 @@ class NotificationServices {
   }
 
   Future<void> handleMessage(BuildContext context, RemoteMessage message) async {
-    if(message.data['type']=='chat'){
-            Navigator.push(
-          context, MaterialPageRoute(
-          builder: (context) => FutureBuilder(
-            future: PostServices().getUser(message.data['sender'].toString()),
-            builder: (context, snapshot) {
-              if(snapshot.connectionState==ConnectionState.waiting){
-                return const Text("Loading");
-              }
-              if(snapshot.hasError){
-                return const Text("Error Loading Message");
-              }
-              return ChatRoom(receiver: snapshot.requireData);
-            },)));
-    }
+    // if(message.data['type']=='chat'){
+    //         Navigator.push(
+    //       context, MaterialPageRoute(
+    //       builder: (context) => FutureBuilder(
+    //         future: PostServices().getUser(message.data['sender'].toString()),
+    //         builder: (context, snapshot) {
+    //           if(snapshot.connectionState==ConnectionState.waiting){
+    //             return const Text("Loading");
+    //           }
+    //           if(snapshot.hasError){
+    //             return const Text("Error Loading Message");
+    //           }
+    //           return ChatRoom(receiver: snapshot.requireData);
+    //         },)));
+    // }
   }
 
   void sendNotification(NotificationsModel notification) async {

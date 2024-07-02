@@ -1,7 +1,13 @@
+import 'dart:html';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:reddit_app/models/chatRoomModel.dart';
 import 'package:reddit_app/services/chat/chat_services.dart';
 import 'package:reddit_app/services/posts/post_services.dart';
+import 'package:universal_html/html.dart';
 
 import 'chatRoom.dart';
 
@@ -13,72 +19,81 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-  ChatServices _chatServices = ChatServices();
+  final ChatServices _chatServices = ChatServices();
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
   @override
   Widget build(BuildContext context) {
-
-    return SingleChildScrollView(
-      child: _buildUserList(),
+    return Column(
+      children: [Expanded(child: _buildUserList())],
     );
   }
-
 
 
   Widget _buildUserList() {
-    return StreamBuilder<QuerySnapshot>(
-        stream: _chatServices.getChatRooms(),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return const Center(child: Text("Error"));
-          }
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: LinearProgressIndicator());
-          }
-          return ListView(
-            shrinkWrap: true,
-            children: snapshot.data!.docs.map<Widget>((doc) => _buildUserListItem(doc)).toList(),
-          );
-        },
-        );
-  }
-
-  Widget _buildUserListItem(DocumentSnapshot document) {
-    Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-
-    return FutureBuilder(
-      future: PostServices().getUser(document.id),
+    return StreamBuilder<List<ChatRoomModel>>(
+      stream: _chatServices.getChatRooms(),
       builder: (context, snapshot) {
-        if(snapshot.hasError){
-          return const Center(child: Text("Error Loading Chat"));
+        if (snapshot.hasError) {
+          return const Center(
+              child: Icon(Icons.error));
         }
-        if(snapshot.connectionState == ConnectionState.waiting){
-          return const SizedBox(height: 0);
+        if (snapshot.connectionState==ConnectionState.waiting) {
+          return Center(
+              child: LoadingAnimationWidget.dotsTriangle(
+                color: const Color(0xFF000000),
+                size: 50,
+              ));
         }
-        return ListTile(
-
-          leading: CircleAvatar(backgroundImage: NetworkImage(snapshot.data!.imageUrl),),
-          minVerticalPadding: 20,
-          title: Text(snapshot.data!.userName, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),),
-          onTap: (){Navigator.push(context, MaterialPageRoute(builder: (context)=> ChatRoom(receiver: snapshot.requireData)));},
-          onLongPress: (){showChatDeletionMenu(document.id);},
+        return ListView.builder(
+          key: const ValueKey('list_view'),
+          itemCount: snapshot.data!.length,
+          itemBuilder: (context, index) {
+            return _buildUserListItem(snapshot.data![index]);
+          },
         );
-      }
-    );
+      },);
+  }
 
+  Widget _buildUserListItem(ChatRoomModel document) {
+    return ListTile(
+      leading: CircleAvatar(
+          backgroundImage: document.imageUrl.isNotEmpty ?
+          NetworkImage(document.imageUrl) :
+          const NetworkImage("https://media.istockphoto.com/id/1288385045/photo/snowcapped-k2-peak.jpg?b=1&s=612x612&w=0&k=20&c=e1AiD8S8C5tvF8ZA24I2Q_5myDSgLdxwU385j_yzG-0="),
+          foregroundColor: Colors.blue,
+          backgroundColor: Colors.transparent,
+          radius: 25
+      ),
+      minVerticalPadding: 20,
+      title: Text(document.roomName,
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),),
+      onTap: () {
+        if(document.members.contains(_firebaseAuth.currentUser!.uid))
+        {
+          print(document.members.contains(_firebaseAuth.currentUser!.uid));
+        Navigator.push(context, MaterialPageRoute(
+            builder: (context) => ChatRoom(roomID: document.roomID, rooMName: document.roomName,)));
+      }},
+      onLongPress: () {
+        showChatDeletionMenu(context, document.roomID);
+      },
+    );
   }
 
 
-  showChatDeletionMenu(String chatID) {
+  showChatDeletionMenu(BuildContext context, String roomID) {
     showModalBottomSheet(
         enableDrag: false,
+        constraints: BoxConstraints(minWidth: MediaQuery.of(context).size.width),
         context: context,
         builder: (BuildContext context) {
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: TextButton.icon(onPressed: (){
-              _chatServices.deleteChat(chatID);
+            child: TextButton.icon(onPressed: () {
+              _chatServices.deleteChat(roomID);
               Navigator.pop(context);
-            }, icon: const Icon(Icons.delete), label: const Text("Hide Chat")),
+            }, icon: const Icon(Icons.delete), label: const Text("Leave Room")),
           );
         });
   }

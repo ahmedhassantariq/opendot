@@ -21,7 +21,7 @@ class CreateNewChat extends StatefulWidget {
 
 class _CreateNewChatState extends State<CreateNewChat> {
   final TextEditingController _searchController = TextEditingController();
-  final ChatServices _firebaseServices = ChatServices();
+  final ChatServices _chatServices = ChatServices();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final StreamController<Stream<QuerySnapshot>> streamController = StreamController();
   final List<String> userList = [];
@@ -34,9 +34,18 @@ class _CreateNewChatState extends State<CreateNewChat> {
 
   searchUserName(){
     setState(() {
-      streamController.add(_firebaseServices.searchUserName(_searchController.text));
+      streamController.add(_chatServices.searchUserName(_searchController.text));
     });
   }
+
+  createNewChat() async {
+    final roomID = await _chatServices.getNewChatRoom();
+    _chatServices.sendChatInvite(userList, roomID);
+    Navigator.pop(context);
+    Navigator.push(context, MaterialPageRoute(builder: (context) => ChatRoom(roomID: roomID,)));
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -60,7 +69,7 @@ class _CreateNewChatState extends State<CreateNewChat> {
                   prefixIcon: IconButton(onPressed: (){_searchController.clear();},icon: const Icon(Icons.search_off_outlined),),
                     suffixIcon: IconButton(onPressed: (){
                       if(userList.isNotEmpty) {
-
+                        createNewChat();
                       }
                     }, icon: const Icon(Icons.send))
                 )
@@ -98,10 +107,9 @@ class _CreateNewChatState extends State<CreateNewChat> {
     );
   }
 
-
   Widget _buildUserList() {
     return StreamBuilder<QuerySnapshot>(
-      stream:  _firebaseServices.searchUserName(_searchController.text),
+      stream:  _chatServices.searchUserName(_searchController.text),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return const Text("User not Found");
@@ -132,8 +140,10 @@ class _CreateNewChatState extends State<CreateNewChat> {
           } else {
             setState(() {
               userList.add(document['uid']);
-              Navigator.pop(context);
-              Navigator.push(context, MaterialPageRoute(builder: (context) => ChatRoom(receiver: model,)));
+              // Navigator.push(context, MaterialPageRoute(builder: (context) => ChatRoom(receiver: model,)));
+              setState(() {
+
+              });
             });
           }
         },

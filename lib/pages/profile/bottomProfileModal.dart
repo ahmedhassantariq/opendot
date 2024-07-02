@@ -96,10 +96,7 @@ class _BottomProfileModalState extends State<BottomProfileModal> {
                   : GestureDetector(
                       onTap: () {
                         ChatServices().getNewChatRoom().then((value) {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ChatRoom(receiver: snapshot.requireData,)));
+                          // Navigator.push(context, MaterialPageRoute(builder: (context) => ChatRoom(receiver: snapshot.requireData,)));
                         });
                       },
                       child: Container(

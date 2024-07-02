@@ -47,9 +47,9 @@ class _VideoCallSendState extends State<VideoCallSend> {
   // }
 
   sendInvite() async{
-    await signaling.createRoom(_localRenderer,_remoteRenderer).then((value) => {
-    _chatServices.sendMessage(widget.receiver.uid, value, 'text')
-    });
+    // await signaling.createRoom(_localRenderer,_remoteRenderer).then((value) => {
+    // _chatServices.sendMessage(widget.receiver.uid, value, 'text')
+    // });
     // sendMessage(roomId!);
 
     setState(() {
