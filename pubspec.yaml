@@ -68,6 +68,7 @@ dependencies:
   assets_audio_player: ^3.0.3+3
   record_mp3: ^3.0.0
   audioplayers: ^6.0.0
+  image_picker: ^1.1.2
 
 
 
