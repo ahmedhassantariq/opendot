@@ -27,11 +27,6 @@ class _ScrollViewPageState extends State<ScrollViewPage> {
   }
 
 
-
-  Future<List<PostModel>> getStream(){
-    final list = _postServices.getPostData().first;
-    return list;
-  }
   @override
   void initState() {
     super.initState();
@@ -42,7 +37,7 @@ class _ScrollViewPageState extends State<ScrollViewPage> {
     return RefreshIndicator(
       onRefresh: refreshScrollView,
       child: FutureBuilder<List<PostModel>>(
-        future: getStream(),
+        future: _postServices.getPostData().first,
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return Center(

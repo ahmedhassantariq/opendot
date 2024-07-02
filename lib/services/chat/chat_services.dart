@@ -15,6 +15,11 @@ class ChatServices extends ChangeNotifier{
     return model;
   }
 
+  Future<ChatRoomModel> getMainRoom(String roomID) async{
+    DocumentSnapshot documentSnapshot = await _firestore.collection('chats').doc(roomID).get();
+    return ChatRoomModel.fromDoc(documentSnapshot);
+  }
+
   Stream<List<ChatMessageModel>> getChatRoomMessages(String roomID){
     Stream<QuerySnapshot> snaps = _firestore.collection('chats').doc(roomID).collection("chats").orderBy('timestamp', descending: false).snapshots();
     Stream<List<ChatMessageModel>> model = snaps.map((event) => event.docs.map((e) => ChatMessageModel.fromJson(e)).toList());

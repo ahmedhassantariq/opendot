@@ -39,18 +39,7 @@ class _ChatRoomState extends State<ChatRoom> {
   void initState() {
 
     super.initState();
-    _controller.addListener(() {
-      print(_controller.offset);
-      if(_controller.offset<_controller.position.maxScrollExtent){
-        setState(() {
-          isAtBottom = false;
-        });
-      } else {
-        setState(() {
-          isAtBottom = true;
-        });
-      }
-    });
+
 
   }
 

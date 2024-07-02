@@ -42,4 +42,17 @@ class ChatRoomModel {
             createdAt:documentSnapshot.get("createdAt")
         ));
   }
+
+  factory ChatRoomModel.fromDoc(DocumentSnapshot documentSnapshot){
+    return (
+        ChatRoomModel
+          (
+            imageUrl: documentSnapshot.get('imageUrl'),
+            members:List<String>.from(documentSnapshot.get('members').map((x) => x)),
+            roomName:documentSnapshot.get('roomName'),
+            roomID:documentSnapshot.get('roomID'),
+            adminUID: documentSnapshot.get('adminUID'),
+            createdAt:documentSnapshot.get("createdAt")
+        ));
+  }
 }

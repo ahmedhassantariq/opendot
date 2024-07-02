@@ -119,16 +119,16 @@ class _CreateNewChatState extends State<CreateNewChat> {
         }
         return ListView(
           shrinkWrap: true,
-          children: snapshot.data!.docs
-              .map<Widget>((doc) => _buildUserListItem(doc))
-              .toList(),
+          children: snapshot.data!.docs.map<Widget>((doc) => _buildUserListItem(doc)).toList(),
         );
       },
     );
   }
 
   Widget _buildUserListItem(DocumentSnapshot document) {
-
+    if(userList.any((element) => element == document['uid']) || document['uid'] == _firebaseAuth.currentUser!.uid){
+      return const SizedBox();
+    }
     UserCredentialsModel model = UserCredentialsModel.fromMap(document as DocumentSnapshot<Map<String, dynamic>>);
     return ListTile(
         leading: CircleAvatar(

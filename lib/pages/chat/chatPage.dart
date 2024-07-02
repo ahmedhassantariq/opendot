@@ -21,7 +21,7 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   final ChatServices _chatServices = ChatServices();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-
+  bool flag = true;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -56,6 +56,7 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   Widget _buildUserListItem(ChatRoomModel document) {
+
     return ListTile(
       leading: CircleAvatar(
           backgroundImage: document.imageUrl.isNotEmpty ?
@@ -69,19 +70,18 @@ class _ChatPageState extends State<ChatPage> {
       title: Text(document.roomName,
         style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),),
       onTap: () {
-        if(document.members.contains(_firebaseAuth.currentUser!.uid))
-        {
-          print(document.members.contains(_firebaseAuth.currentUser!.uid));
-        Navigator.push(context, MaterialPageRoute(
-            builder: (context) => ChatRoom(roomID: document.roomID, rooMName: document.roomName,)));
-      }},
+        if(document.members.contains(_firebaseAuth.currentUser!.uid)) {
+          Navigator.push(context, MaterialPageRoute(builder: (context) =>
+              ChatRoom(roomID: document.roomID, rooMName: document.roomName,)));
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(duration: Duration(seconds: 1), content: Text("Cannot Access Chat Room")));
+        }
+      },
       onLongPress: () {
         showChatDeletionMenu(context, document.roomID);
       },
     );
   }
-
-
   showChatDeletionMenu(BuildContext context, String roomID) {
     showModalBottomSheet(
         enableDrag: false,

@@ -88,7 +88,7 @@ class _HomePageState extends State<HomePage> {
          unselectedItemColor: Colors.grey,
          showUnselectedLabels: true,
          items:  const [
-           BottomNavigationBarItem(icon: Icon(Icons.computer_outlined, color: Colors.grey,), label: "PC", activeIcon: Icon(Icons.computer)),
+           BottomNavigationBarItem(icon: Icon(Icons.home_outlined, color: Colors.grey,), label: "Home", activeIcon: Icon(Icons.home)),
            BottomNavigationBarItem(icon: Icon(CupertinoIcons.globe), label: "Internet", activeIcon: Icon(CupertinoIcons.globe)),
            BottomNavigationBarItem(icon: Icon(Icons.add_outlined), label: "Create", activeIcon: Icon(Icons.add)),
            BottomNavigationBarItem(icon: Icon(Icons.chat_outlined), label: "Chat", activeIcon: Icon(Icons.chat)),
