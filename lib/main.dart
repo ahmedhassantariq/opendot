@@ -8,6 +8,7 @@ import 'package:reddit_app/services/auth/auth_service.dart';
 import 'package:reddit_app/services/chat/chat_services.dart';
 import 'package:reddit_app/services/firebase/firebase_options.dart';
 import 'package:reddit_app/services/firebase/firebase_services.dart';
+import 'package:reddit_app/services/hub/hub_services.dart';
 import 'package:reddit_app/services/posts/post_services.dart';
 
 
@@ -18,7 +19,14 @@ void main() async{
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   runApp(
-      ChangeNotifierProvider(create: (context) => AuthService(),
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (context)=>AuthService()),
+          ChangeNotifierProvider(create: (context)=>FirebaseServices()),
+          ChangeNotifierProvider(create: (context)=>HubServices()),
+          ChangeNotifierProvider(create: (context)=>PostServices()),
+          ChangeNotifierProvider(create: (context)=>ChatServices()),
+        ],
         child: const MyApp(),
       )
   );
@@ -35,13 +43,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    return MultiProvider(
-        providers: [
-          ChangeNotifierProvider<FirebaseServices>(create: (context)=>FirebaseServices()),
-          ChangeNotifierProvider<PostServices>(create: (context)=>PostServices()),
-          ChangeNotifierProvider<ChatServices>(create: (context)=>ChatServices()),
-    ],
-      child: FractionallySizedBox(
+    return FractionallySizedBox(
         widthFactor: kIsWeb ? (screenWidth < 500 ? 1.0 : 500 / screenWidth) : 1.0,
         child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -51,7 +53,6 @@ class MyApp extends StatelessWidget {
         home: const AuthGate()
 
         )
-            )
       );
   }
 }

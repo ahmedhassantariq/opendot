@@ -1,18 +1,35 @@
-import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:reddit_app/models/userDataModel.dart';
+import 'package:reddit_app/models/hubModel.dart';
 
 class HubServices extends ChangeNotifier{
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  late List<HubModel> hubList = [];
 
-  Stream<QuerySnapshot> getHubs() {
-    return _firestore.collection("users").doc(_firebaseAuth.currentUser!.uid).collection("joinedHubs")
-        .snapshots();
+
+  Future<List<HubModel>> loadHubs() async{
+    Stream<QuerySnapshot> stream = _firestore.collection("users").doc(_firebaseAuth.currentUser!.uid).collection("userHubs").snapshots();
+    Stream<List<HubModel>> model = stream.map((event) => event.docs.map((e) => HubModel.fromJson(e)).toList());
+    print("Hubs Loaded");
+    return model.first;
+  }
+
+
+
+  List<HubModel> getHubs() {
+    // Stream<QuerySnapshot> stream = _firestore.collection('posts').orderBy('uploadedOn', descending: true).snapshots();
+    // Stream<List<HubModel>> model = stream.map((event) => event.docs.map((e) => HubModel.fromJson(e)).toList());
+    //_firestore.collection("users").doc(_firebaseAuth.currentUser!.uid).collection("joinedHubs").snapshots();
+    print("Catching");
+    if(hubList.isEmpty){
+      loadHubs().then((value) => hubList = value);
+      return hubList;
+    } else {
+      return hubList;
+    }
   }
 
   Stream<QuerySnapshot> getUserHubs() {

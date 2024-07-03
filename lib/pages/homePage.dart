@@ -2,9 +2,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
+import 'package:provider/provider.dart';
 
 import 'package:reddit_app/pages/drawer/endDrawer.dart';
 import 'package:reddit_app/pages/scrollView.dart';
+import 'package:reddit_app/services/hub/hub_services.dart';
 import 'package:reddit_app/services/notifications/notification_services.dart';
 import 'package:reddit_app/services/posts/post_services.dart';
 import '../services/firebase/firebase_services.dart';
@@ -23,8 +25,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final NotificationServices notificationServices = NotificationServices();
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final HubServices _hubServices = HubServices();
   int currentIndex = 0;
 
   onTapped(int index){
@@ -65,6 +67,7 @@ class _HomePageState extends State<HomePage> {
     notificationServices.setupInteractMessage(context);
     notificationServices.getDeviceToken();
     notificationServices.isTokenRefresh();
+
     // TODO: implement initState
     super.initState();
   }

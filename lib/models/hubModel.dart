@@ -15,15 +15,16 @@ class HubModel{
     required this.isPublic,
   });
 
-  factory HubModel.fromMap(DocumentSnapshot<Map<String, dynamic>>? documentSnapshot){
+  factory HubModel.fromJson(QueryDocumentSnapshot documentSnapshot){
     return(
         HubModel(
-            hubID: documentSnapshot?.get("hubID"),
-            hubTitle: documentSnapshot?.get("hubTitle"),
-            createdBy: documentSnapshot?.get("createdBy"),
-            createdOn: documentSnapshot?.get("createdOn"),
-            isPublic: documentSnapshot?.get("isPublic")
+            hubID: documentSnapshot.get("hubID"),
+            hubTitle: documentSnapshot.get("hubTitle"),
+            createdBy: documentSnapshot.get("createdBy"),
+            createdOn: documentSnapshot.get("createdOn"),
+            isPublic: documentSnapshot.get("isPublic")
         )
     );
   }
+
 }
