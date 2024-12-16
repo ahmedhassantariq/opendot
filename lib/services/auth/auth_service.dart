@@ -30,8 +30,7 @@ class AuthService extends ChangeNotifier {
   Future<UserCredential> signUpWithEmailAndPassword(String email, password) async {
     String fcmToken = "";
     if(kIsWeb || defaultTargetPlatform==TargetPlatform.android){
-      await NotificationServices().getDeviceToken().then((value) =>
-      fcmToken = value);
+      fcmToken = await NotificationServices().getDeviceToken();
     }
     try{
       UserCredential userCredential = await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
@@ -41,7 +40,7 @@ class AuthService extends ChangeNotifier {
         'email': userCredential.user!.email,
         'photoUrl':"https://upload.wikimedia.org/wikipedia/commons/0/0e/Basic_red_dot.png",
         'displayName':"NewUser",
-        'phoneNumber':"0123456789",
+        'phoneNumber':"",
         'fcmToken': fcmToken,
         'emailVerified':userCredential.user!.emailVerified,
         'isAnonymous':userCredential.user!.isAnonymous,

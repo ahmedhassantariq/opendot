@@ -3,23 +3,23 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>342650286989-8tptqrtos8k0bitohbru057r0jn9bvpd.apps.googleusercontent.com</string>
+	<string>409889097164-s1ncvu3rv8qqa16ce7iiuion22l9nteu.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.342650286989-8tptqrtos8k0bitohbru057r0jn9bvpd</string>
+	<string>com.googleusercontent.apps.409889097164-s1ncvu3rv8qqa16ce7iiuion22l9nteu</string>
 	<key>ANDROID_CLIENT_ID</key>
-	<string>342650286989-f1e2puqpt3klf0917j86p165amul3apf.apps.googleusercontent.com</string>
+	<string>409889097164-6c39p02rct9v8ci779sj9aip60bkbpgr.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
-	<string>AIzaSyAdu5HLZGQLds0xPMFfXcYv_syBaukAhsI</string>
+	<string>AIzaSyDDD7hpkCoD1Z5aiE-iNqIgTa2eFygLSdg</string>
 	<key>GCM_SENDER_ID</key>
-	<string>342650286989</string>
+	<string>409889097164</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>com.example.redditApp</string>
 	<key>PROJECT_ID</key>
-	<string>delivery-87e23</string>
+	<string>opendot-0</string>
 	<key>STORAGE_BUCKET</key>
-	<string>delivery-87e23.appspot.com</string>
+	<string>opendot-0.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -31,8 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:342650286989:ios:276b07b63eb6b8eb0083c4</string>
-	<key>DATABASE_URL</key>
-	<string>https://delivery-87e23-default-rtdb.firebaseio.com</string>
+	<string>1:409889097164:ios:10447522fa67bc2a6bc969</string>
 </dict>
 </plist>

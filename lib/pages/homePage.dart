@@ -26,7 +26,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final NotificationServices notificationServices = NotificationServices();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final HubServices _hubServices = HubServices();
   int currentIndex = 0;
 
   onTapped(int index){

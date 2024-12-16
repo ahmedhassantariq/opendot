@@ -32,10 +32,8 @@ class PostFileIcon extends StatelessWidget {
               name: title,
               downloadDestination: DownloadDestinations.publicDownloads,
               onProgress: (process, value){
-
               },
               onDownloadCompleted: (completed){
-
               },
               onDownloadError: (e){
 
@@ -43,7 +41,6 @@ class PostFileIcon extends StatelessWidget {
           );
         }catch(e){
         }
-
       } else if (value.isDenied) {
         print("Permission Denied");
       } else {

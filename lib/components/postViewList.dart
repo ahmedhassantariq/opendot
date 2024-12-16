@@ -40,7 +40,6 @@ class _PostViewListState extends State<PostViewList> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8.0)),
-      // margin: const EdgeInsets.symmetric(vertical: 20),
       height: widget.imageUrl.isNotEmpty? 200:0,
       child: PageView.builder(
         pageSnapping: true,

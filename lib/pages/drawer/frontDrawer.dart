@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:reddit_app/models/hubModel.dart';
@@ -18,7 +16,6 @@ class FrontDrawer extends StatefulWidget {
 class _FrontDrawerState extends State<FrontDrawer> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
@@ -73,7 +70,6 @@ class _FrontDrawerState extends State<FrontDrawer> {
   Widget _buildUserHubList() {
     final hubService = Provider.of<HubServices>(context, listen: true);
     List<HubModel> list = hubService.getHubs();
-
     return ListView.builder(
       shrinkWrap: true,
       itemCount: list.length,
@@ -96,5 +92,6 @@ class _FrontDrawerState extends State<FrontDrawer> {
       );
   }
 }
+
 
 
